@@ -1,13 +1,76 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Medical07 CRM
 
-## About Laravel
+Laravel-based CRM for medical case coordination with a Kanban pipeline board, RBAC, and status history.
+
+## Quick Local Setup
+
+```bash
+cd crm
+
+# 1. Install PHP dependencies
+composer install
+
+# 2. Copy and configure environment
+cp .env.example .env
+php artisan key:generate
+
+# 3. Configure your database in .env (DB_DATABASE, DB_USERNAME, DB_PASSWORD)
+
+# 4. Run migrations in order:
+php artisan migrate
+
+# 5. Seed roles, case statuses, and admin user
+php artisan db:seed
+
+# 6. Install JS dependencies and build assets
+npm install
+npm run build
+
+# 7. Start development server
+php artisan serve
+```
+
+Open http://localhost:8000 and log in with `admin@medical07.local` / `ChangeMe123!`.
+
+## Migrations (in order)
+
+1. `2014_10_12_000000_create_users_table`
+2. `2014_10_12_100000_create_password_reset_tokens_table`
+3. `2019_08_19_000000_create_failed_jobs_table`
+4. `2019_12_14_000001_create_personal_access_tokens_table`
+5. `2026_04_24_194129_create_permission_tables` — spatie/permission
+6. `2026_04_24_194942_create_case_statuses_table` — pipeline + service statuses
+7. `2026_04_24_195236_create_patients_table`
+8. `2026_04_24_195336_create_medical_cases_table` — original cases table
+9. `2026_04_24_200000_update_cases_pipeline_service_status` — renames `case_status_id` → `pipeline_status_id`, adds `service_status_id`
+10. `2026_04_24_200100_create_case_status_histories_table` — audit log for status transitions
+
+## RBAC Roles
+
+| Role | Permissions |
+|------|-------------|
+| `admin` | Full access |
+| `coordinator` | Move cases across all pipeline statuses; set/clear service statuses |
+| `intake` | Create patients/cases; move cases within pipeline stages 1–4 only |
+
+## Key Routes
+
+| Method | URL | Purpose |
+|--------|-----|---------|
+| GET | `/cases/board` | Kanban board |
+| GET | `/cases` | Case list |
+| GET/POST | `/cases/create` | Create case |
+| PATCH | `/cases/{id}/pipeline-status` | Update pipeline status (JSON, drag&drop) |
+| PATCH | `/cases/{id}/service-status` | Set/clear service pause overlay (JSON) |
+
+## Pipeline vs Service Statuses
+
+- **Pipeline statuses** (is_service=false, sort_order 1–15): represent the main workflow stages shown as Kanban columns.
+- **Service/pause statuses** (is_service=true, sort_order 101+): overlay badges shown on cards without changing the pipeline stage (e.g. "Ожидаю клиента", "Стоп").
+
+
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
