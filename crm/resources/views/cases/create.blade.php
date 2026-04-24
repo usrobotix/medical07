@@ -23,15 +23,15 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium">Статус *</label>
-                        <select name="case_status_id" class="mt-1 w-full border rounded px-3 py-2" required>
+                        <label class="block text-sm font-medium">Статус (этап) *</label>
+                        <select name="pipeline_status_id" class="mt-1 w-full border rounded px-3 py-2" required>
                             @foreach($statuses as $s)
-                                <option value="{{ $s->id }}" @selected(old('case_status_id') == $s->id)>
+                                <option value="{{ $s->id }}" @selected(old('pipeline_status_id') == $s->id)>
                                     {{ $s->sort_order }} — {{ $s->name }}
                                 </option>
                             @endforeach
                         </select>
-                        @error('case_status_id')<div class="text-red-600 text-sm">{{ $message }}</div>@enderror
+                        @error('pipeline_status_id')<div class="text-red-600 text-sm">{{ $message }}</div>@enderror
                     </div>
 
                     <div>

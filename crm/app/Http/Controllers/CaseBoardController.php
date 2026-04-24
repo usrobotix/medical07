@@ -9,16 +9,18 @@ class CaseBoardController extends Controller
 {
     public function index()
     {
-        $statuses = CaseStatus::query()
-            ->orderBy('sort_order')
-            ->get();
+        // Only pipeline (non-service) statuses as columns
+        $statuses = CaseStatus::pipeline()->get();
+
+        // Service statuses for the overlay dropdown on each card
+        $serviceStatuses = CaseStatus::service()->get();
 
         $cases = MedicalCase::query()
-            ->with(['patient', 'status'])
+            ->with(['patient', 'pipelineStatus', 'serviceStatus'])
             ->orderByDesc('updated_at')
             ->get()
-            ->groupBy('case_status_id');
+            ->groupBy('pipeline_status_id');
 
-        return view('cases.board', compact('statuses', 'cases'));
+        return view('cases.board', compact('statuses', 'serviceStatuses', 'cases'));
     }
 }

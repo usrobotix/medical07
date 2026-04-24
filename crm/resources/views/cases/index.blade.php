@@ -28,7 +28,14 @@
                             <tr class="border-b">
                                 <td class="py-2">{{ $c->id }}</td>
                                 <td>{{ $c->patient?->full_name }}</td>
-                                <td>{{ $c->status?->name }}</td>
+                                 <td>
+                                    {{ $c->pipelineStatus?->name }}
+                                    @if($c->serviceStatus)
+                                        <span class="ml-1 inline-block px-1.5 py-0.5 text-xs rounded-full bg-yellow-100 text-yellow-800">
+                                            ⏸ {{ $c->serviceStatus->name }}
+                                        </span>
+                                    @endif
+                                </td>
                                 <td>{{ $c->priority }}</td>
                                 <td>{{ $c->assignedTo?->name }}</td>
                                 <td>{{ $c->updated_at?->format('Y-m-d H:i') }}</td>
