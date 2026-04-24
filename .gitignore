@@ -1,0 +1,28 @@
+# OpenServer / hosting artifacts in repo root
+public/
+
+# Laravel (crm)
+crm/vendor/
+crm/node_modules/
+crm/.env
+crm/.env.*
+!crm/.env.example
+
+crm/storage/*.key
+crm/storage/framework/cache/**
+crm/storage/framework/sessions/**
+crm/storage/framework/views/**
+crm/storage/logs/**
+
+# Vite build artifacts (обычно не коммитим)
+crm/public/build/
+
+# IDE / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# PHPUnit / coverage
+crm/coverage/
+crm/.phpunit.result.cache
