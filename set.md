@@ -123,7 +123,7 @@ NDA подписан:           ☐ да  ☐ нет
 
 | Страна | На что смотреть | Ориентировочные поисковые запросы |
 |---|---|---|
-| 🇹🇷 Турция | Онкология, ортопедия, кардиология; много клиник с русскоязычными IPO; конкурентный чек | `«international patient coordinator» + название клиники`, `JCI accredited hospitals Turkey oncology` |
+| 🇹🇷 Турция | Онкология, ортопедия, кардиология; много клиник с русскоязычными IPO; конкурентный чек | `international patient coordinator + clinic name`, `JCI accredited hospitals Turkey oncology` |
 | 🇮🇱 Израиль | Онкология (топ-уровень), генетика, репродуктология; дорого, но высокое качество | `Sheba / Hadassah / Ichilov international patients`, `Israel oncology second opinion coordinator` |
 | 🇩🇪 Германия | Нейрохирургия, онкология, кардиология; высокая стоимость, строгая документация | `Charité / Heidelberg / MRI München Patientenmanagement`, `Germany hospital international office second opinion` |
 | 🇪🇸 Испания | Онкология, ЭКО (лидер репродуктологии), ортопедия | `IVI Valencia / Barcelona international patients`, `Spain IVF clinic coordinator` |
