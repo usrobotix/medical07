@@ -11,11 +11,23 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                </div>
+              <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+        Dashboard
+    </x-nav-link>
+
+    <x-nav-link :href="route('patients.index')" :active="request()->routeIs('patients.*')">
+        Пациенты
+    </x-nav-link>
+
+    <x-nav-link :href="route('cases.index')" :active="request()->routeIs('cases.*')">
+        Кейсы
+    </x-nav-link>
+
+    <x-nav-link :href="route('cases.board')" :active="request()->routeIs('cases.board')">
+        Канбан
+    </x-nav-link>
+</div>
             </div>
 
             <!-- Settings Dropdown -->
