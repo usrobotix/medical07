@@ -1,41 +1,51 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Канбан</h2>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Канбан</h2>
             <div class="flex gap-2">
-                <a href="{{ route('cases.index') }}" class="px-3 py-2 border rounded">Список</a>
-                <a href="{{ route('cases.create') }}" class="px-3 py-2 bg-blue-600 text-white rounded">+ Кейс</a>
+                <a href="{{ route('cases.index') }}"
+                   class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 transition ease-in-out duration-150">
+                    Список
+                </a>
+                <a href="{{ route('cases.create') }}"
+                   class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white transition ease-in-out duration-150">
+                    + Кейс
+                </a>
             </div>
         </div>
     </x-slot>
 
     {{-- Toast notification --}}
     <div id="toast"
-         class="hidden fixed top-4 right-4 z-50 px-4 py-3 rounded shadow-lg text-sm font-medium transition-all"
-         role="alert"></div>
+         class="hidden fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg text-sm font-medium transition-all"
+         role="alert" aria-live="polite"></div>
 
     <div class="py-6">
         <div class="max-w-full mx-auto px-4">
-            <div class="flex gap-4 overflow-x-auto pb-4" id="kanban-board">
+            <div class="flex gap-4 overflow-x-auto pb-4" id="kanban-board" style="min-height: 70vh;">
                 @foreach($statuses as $status)
-                    <div class="min-w-[280px] max-w-[280px] bg-gray-50 border border-gray-200 rounded-lg p-3 flex-shrink-0 kanban-col"
+                    <div class="flex flex-col min-w-[280px] max-w-[280px] bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg flex-shrink-0 kanban-col"
                          data-status-id="{{ $status->id }}"
                          data-sort-order="{{ $status->sort_order }}"
-                         ondragover="event.preventDefault(); this.classList.add('ring-2','ring-blue-400');"
-                         ondragleave="this.classList.remove('ring-2','ring-blue-400');"
+                         ondragover="event.preventDefault(); this.classList.add('ring-2','ring-indigo-400');"
+                         ondragleave="this.classList.remove('ring-2','ring-indigo-400');"
                          ondrop="handleDrop(event, {{ $status->id }})">
 
-                        <div class="font-semibold text-sm mb-3 text-gray-700 flex items-center justify-between">
-                            <span>{{ $status->sort_order }}. {{ $status->name }}</span>
-                            <span class="text-xs text-gray-400 font-normal ml-1">
-                                ({{ $cases->get($status->id, collect())->count() }})
-                            </span>
+                        {{-- Sticky column header --}}
+                        <div class="sticky top-0 z-10 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2.5 rounded-t-lg">
+                            <div class="font-semibold text-sm text-gray-700 dark:text-gray-200 flex items-center justify-between">
+                                <span>{{ $status->sort_order }}. {{ $status->name }}</span>
+                                <span class="text-xs text-gray-400 dark:text-gray-500 font-normal ml-1 col-count" data-status-id="{{ $status->id }}">
+                                    ({{ $cases->get($status->id, collect())->count() }})
+                                </span>
+                            </div>
                         </div>
 
-                        <div class="space-y-2 kanban-cards" id="col-{{ $status->id }}">
+                        {{-- Cards container --}}
+                        <div class="flex-1 overflow-y-auto p-3 space-y-2 kanban-cards" id="col-{{ $status->id }}">
                             @php($list = $cases->get($status->id, collect()))
                             @forelse($list as $c)
-                                <div class="bg-white border border-gray-200 rounded p-3 shadow-sm cursor-grab active:cursor-grabbing kanban-card"
+                                <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md p-3 shadow-sm cursor-grab active:cursor-grabbing kanban-card transition-shadow hover:shadow-md"
                                      draggable="true"
                                      data-case-id="{{ $c->id }}"
                                      data-pipeline-status-id="{{ $c->pipeline_status_id }}"
@@ -43,30 +53,27 @@
                                      ondragend="handleDragEnd(event)">
 
                                     {{-- Title --}}
-                                    <div class="text-sm font-semibold text-gray-800">
+                                    <div class="text-sm font-semibold text-gray-800 dark:text-gray-100">
                                         #{{ $c->id }} {{ $c->title ?: 'Без названия' }}
                                     </div>
 
                                     {{-- Patient --}}
-                                    <div class="text-xs text-gray-500 mt-1">
+                                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                         {{ $c->patient?->full_name }}
                                     </div>
 
                                     {{-- Service status badge (overlay) --}}
-                                    @if($c->serviceStatus)
-                                        <div class="mt-2">
-                                            <span class="inline-block px-2 py-0.5 text-xs rounded-full bg-yellow-100 text-yellow-800 font-medium service-badge"
-                                                  id="svc-badge-{{ $c->id }}">
+                                    <div class="mt-2" id="svc-badge-{{ $c->id }}">
+                                        @if($c->serviceStatus)
+                                            <span class="inline-block px-2 py-0.5 text-xs rounded-full bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300 font-medium">
                                                 ⏸ {{ $c->serviceStatus->name }}
                                             </span>
-                                        </div>
-                                    @else
-                                        <div class="mt-2" id="svc-badge-{{ $c->id }}"></div>
-                                    @endif
+                                        @endif
+                                    </div>
 
                                     {{-- Service status dropdown --}}
                                     <div class="mt-2">
-                                        <select class="text-xs border border-gray-200 rounded px-1 py-0.5 w-full bg-white service-status-select"
+                                        <select class="text-xs border border-gray-200 dark:border-gray-600 rounded px-1 py-0.5 w-full bg-white dark:bg-gray-600 dark:text-gray-200 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 service-status-select"
                                                 data-case-id="{{ $c->id }}"
                                                 onchange="updateServiceStatus(this)">
                                             <option value="">— Без паузы —</option>
@@ -80,14 +87,22 @@
                                     </div>
 
                                     {{-- Priority & date --}}
-                                    <div class="text-xs text-gray-400 mt-2 flex justify-between">
-                                        <span>P{{ $c->priority }}</span>
+                                    <div class="text-xs text-gray-400 dark:text-gray-500 mt-2 flex justify-between">
+                                        <span>Приоритет: {{ $c->priority }}</span>
                                         <span>{{ $c->updated_at?->format('d.m H:i') }}</span>
                                     </div>
                                 </div>
                             @empty
-                                <div class="text-xs text-gray-400 italic py-2 text-center">Нет кейсов</div>
+                                <div class="flex flex-col items-center justify-center py-8 text-gray-300 dark:text-gray-600 kanban-empty">
+                                    <svg class="h-8 w-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                    </svg>
+                                    <span class="text-xs italic">Нет кейсов</span>
+                                </div>
                             @endforelse
+
+                            {{-- Drop zone placeholder (shown on drag-over when col is empty) --}}
+                            <div class="kanban-drop-placeholder hidden h-16 rounded border-2 border-dashed border-indigo-300 dark:border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20"></div>
                         </div>
                     </div>
                 @endforeach
@@ -107,20 +122,35 @@
         dragSourceColId = draggedCard.closest('.kanban-col').dataset.statusId;
         e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.setData('text/plain', draggedCard.dataset.caseId);
-        setTimeout(() => draggedCard.classList.add('opacity-40'), 0);
+        setTimeout(() => {
+            draggedCard.classList.add('opacity-40', 'ring-2', 'ring-indigo-400');
+        }, 0);
+        // Show placeholders in all other columns
+        document.querySelectorAll('.kanban-col').forEach(col => {
+            if (col.dataset.statusId !== dragSourceColId) {
+                const ph = col.querySelector('.kanban-drop-placeholder');
+                if (ph) ph.classList.remove('hidden');
+            }
+        });
     }
 
     function handleDragEnd(e) {
-        draggedCard?.classList.remove('opacity-40');
+        if (draggedCard) {
+            draggedCard.classList.remove('opacity-40', 'ring-2', 'ring-indigo-400');
+        }
         document.querySelectorAll('.kanban-col').forEach(col => {
-            col.classList.remove('ring-2', 'ring-blue-400');
+            col.classList.remove('ring-2', 'ring-indigo-400');
+            const ph = col.querySelector('.kanban-drop-placeholder');
+            if (ph) ph.classList.add('hidden');
         });
     }
 
     function handleDrop(e, targetStatusId) {
         e.preventDefault();
         const col = e.currentTarget;
-        col.classList.remove('ring-2', 'ring-blue-400');
+        col.classList.remove('ring-2', 'ring-indigo-400');
+        const ph = col.querySelector('.kanban-drop-placeholder');
+        if (ph) ph.classList.add('hidden');
 
         if (!draggedCard) return;
 
@@ -131,12 +161,21 @@
 
         // Optimistic UI: move the card immediately
         const targetList = document.getElementById('col-' + targetStatusId);
-        targetList.appendChild(draggedCard);
+        const emptyEl = targetList.querySelector('.kanban-empty');
+        if (emptyEl) emptyEl.classList.add('hidden');
+        targetList.insertBefore(draggedCard, ph);
         draggedCard.dataset.pipelineStatusId = targetStatusId;
 
         // Update counter badges
         updateColCount(sourceStatusId);
         updateColCount(targetStatusId);
+
+        // Show empty placeholder in source col if needed
+        const sourceList = document.getElementById('col-' + sourceStatusId);
+        if (sourceList && sourceList.querySelectorAll('.kanban-card').length === 0) {
+            const srcEmpty = sourceList.querySelector('.kanban-empty');
+            if (srcEmpty) srcEmpty.classList.remove('hidden');
+        }
 
         // Call server
         fetch(`/cases/${caseId}/pipeline-status`, {
@@ -161,12 +200,22 @@
         .catch(err => {
             showToast('Ошибка: ' + err.message, 'error');
             // Revert: move card back
-            const sourceList = document.getElementById('col-' + sourceStatusId);
             if (sourceList) {
-                sourceList.appendChild(draggedCard);
+                const srcPh = sourceList.querySelector('.kanban-drop-placeholder');
+                sourceList.insertBefore(draggedCard, srcPh);
                 draggedCard.dataset.pipelineStatusId = sourceStatusId;
                 updateColCount(sourceStatusId);
                 updateColCount(targetStatusId);
+                // Re-hide empty in target
+                if (targetList && targetList.querySelectorAll('.kanban-card').length === 0) {
+                    const tgtEmpty = targetList.querySelector('.kanban-empty');
+                    if (tgtEmpty) tgtEmpty.classList.remove('hidden');
+                }
+                // Hide empty in source
+                const srcEmpty2 = sourceList.querySelector('.kanban-empty');
+                if (srcEmpty2 && sourceList.querySelectorAll('.kanban-card').length > 0) {
+                    srcEmpty2.classList.add('hidden');
+                }
             }
         });
     }
@@ -194,7 +243,7 @@
         })
         .then(data => {
             if (data.service_status_name) {
-                badgeEl.innerHTML = `<span class="inline-block px-2 py-0.5 text-xs rounded-full bg-yellow-100 text-yellow-800 font-medium">⏸ ${data.service_status_name}</span>`;
+                badgeEl.innerHTML = `<span class="inline-block px-2 py-0.5 text-xs rounded-full bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300 font-medium">⏸ ${data.service_status_name}</span>`;
             } else {
                 badgeEl.innerHTML = '';
             }
@@ -206,19 +255,20 @@
     }
 
     function updateColCount(statusId) {
-        const col = document.querySelector(`.kanban-col[data-status-id="${statusId}"]`);
-        if (!col) return;
-        const count = col.querySelectorAll('.kanban-card').length;
-        const badge = col.querySelector('.text-gray-400.font-normal');
-        if (badge) badge.textContent = `(${count})`;
+        const badge = document.querySelector(`.col-count[data-status-id="${statusId}"]`);
+        if (!badge) return;
+        const col = document.getElementById('col-' + statusId);
+        const count = col ? col.querySelectorAll('.kanban-card').length : 0;
+        badge.textContent = `(${count})`;
     }
 
     function showToast(msg, type) {
         const el = document.getElementById('toast');
         el.textContent = msg;
-        el.className = 'fixed top-4 right-4 z-50 px-4 py-3 rounded shadow-lg text-sm font-medium transition-all '
-            + (type === 'error' ? 'bg-red-100 text-red-800 border border-red-300'
-                                : 'bg-green-100 text-green-800 border border-green-300');
+        const base = 'fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg text-sm font-medium transition-all ';
+        el.className = base + (type === 'error'
+            ? 'bg-red-100 dark:bg-red-900/80 text-red-800 dark:text-red-200 border border-red-300 dark:border-red-700'
+            : 'bg-green-100 dark:bg-green-900/80 text-green-800 dark:text-green-200 border border-green-300 dark:border-green-700');
         el.classList.remove('hidden');
         clearTimeout(el._hideTimer);
         el._hideTimer = setTimeout(() => el.classList.add('hidden'), 3000);
