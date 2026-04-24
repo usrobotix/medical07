@@ -20,7 +20,7 @@
                         Пациенты
                     </x-nav-link>
 
-                    <x-nav-link :href="route('cases.index')" :active="request()->routeIs('cases.index') || request()->routeIs('cases.create') || request()->routeIs('cases.show') || request()->routeIs('cases.edit')">
+                    <x-nav-link :href="route('cases.index')" :active="request()->routeIs('cases.*') && !request()->routeIs('cases.board')">
                         Кейсы
                     </x-nav-link>
 
@@ -119,7 +119,7 @@
             <x-responsive-nav-link :href="route('patients.index')" :active="request()->routeIs('patients.*')">
                 Пациенты
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('cases.index')" :active="request()->routeIs('cases.index') || request()->routeIs('cases.create') || request()->routeIs('cases.show') || request()->routeIs('cases.edit')">
+            <x-responsive-nav-link :href="route('cases.index')" :active="request()->routeIs('cases.*') && !request()->routeIs('cases.board')">
                 Кейсы
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('cases.board')" :active="request()->routeIs('cases.board')">

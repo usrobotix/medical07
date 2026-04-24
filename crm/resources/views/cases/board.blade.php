@@ -27,8 +27,8 @@
                     <div class="flex flex-col min-w-[280px] max-w-[280px] bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg flex-shrink-0 kanban-col"
                          data-status-id="{{ $status->id }}"
                          data-sort-order="{{ $status->sort_order }}"
-                         ondragover="event.preventDefault(); this.classList.add('ring-2','ring-indigo-400','dark:ring-indigo-500');"
-                         ondragleave="this.classList.remove('ring-2','ring-indigo-400','dark:ring-indigo-500');"
+                         ondragover="event.preventDefault(); this.classList.add('ring-2','ring-indigo-400');"
+                         ondragleave="this.classList.remove('ring-2','ring-indigo-400');"
                          ondrop="handleDrop(event, {{ $status->id }})">
 
                         {{-- Sticky column header --}}
