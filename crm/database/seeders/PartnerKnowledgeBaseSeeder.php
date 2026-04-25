@@ -16,6 +16,7 @@ class PartnerKnowledgeBaseSeeder extends Seeder
             VerificationChecklistSeeder::class,
             MessageTemplateSeeder::class,
             DemoPartnerSeeder::class,
+            ClinicResearchSeeder::class,
         ]);
     }
 }

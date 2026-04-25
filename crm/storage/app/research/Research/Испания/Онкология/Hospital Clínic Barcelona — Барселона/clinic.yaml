@@ -1,0 +1,48 @@
+название: Hospital Clínic Barcelona
+страна: Испания
+город: Барселона
+направление: Онкология
+адрес: Carrer de Villarroel 170, 08036 Barcelona, Spain
+
+контакты:
+  сайт: https://www.clinicbarcelona.org/en
+  телефон: "+34 932 27 54 00"
+  email: internacional@clinic.cat
+  страница_для_иностранных_пациентов: https://www.clinicbarcelona.org/en/patients-and-visitors/international-patients
+
+приём_иностранцев:
+  статус: да — International Patients Unit
+  источник_url: https://www.clinicbarcelona.org/en/patients-and-visitors/international-patients
+
+приём_пациентов_из_РФ:
+  статус: принимают; оплата через банковский перевод (уточнить санкционные ограничения)
+  источник_url: https://www.clinicbarcelona.org/en/patients-and-visitors/international-patients
+
+режим_работы:
+  клиника: 24/7 (стационар), International Unit Пн–Пт 09:00–17:00
+
+дата_последней_проверки: "2026-04-25"
+
+ключевые_услуги:
+  - Онкология (гематология, рак ЖКТ, гинекологическая онкология)
+  - Трансплантация костного мозга и стволовых клеток
+  - Иммунотерапия CAR-T
+  - Клинические исследования (фазы I–III)
+  - Молекулярная диагностика
+  - Онлайн второе мнение
+
+врачи:
+  - должность: Профессор гематоонкологии
+    специализация: Лимфомы, трансплантация, иммунотерапия
+    язык_приёма: EN, ES, CA
+    примечание: конкретные имена уточняются через International Unit
+
+цены:
+  онлайн_второе_мнение: от 650 EUR
+  очная_консультация: от 400 EUR
+  примечание: официальный счёт; банковский перевод
+
+отзывы: []
+
+источники:
+  - https://www.clinicbarcelona.org/en/patients-and-visitors/international-patients

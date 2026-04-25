@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Partner extends Model
 {
@@ -65,5 +66,10 @@ class Partner extends Model
     public function verifications(): HasMany
     {
         return $this->hasMany(PartnerVerification::class);
+    }
+
+    public function researchProfile(): HasOne
+    {
+        return $this->hasOne(PartnerResearchProfile::class);
     }
 }
