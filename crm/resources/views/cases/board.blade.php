@@ -1,14 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Канбан</h2>
+            <h2 class="text-ys-l font-semibold text-dc leading-tight">Канбан</h2>
             <div class="flex gap-2">
                 <a href="{{ route('cases.index') }}"
-                   class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 transition ease-in-out duration-150">
+                   class="dc-btn inline-flex items-center px-[14px] h-9 text-ys-s rounded-2xs font-medium dc-transition bg-transparent text-dc shadow-[inset_0_0_0_1px_var(--color-border)] hover:shadow-[inset_0_0_0_1px_var(--color-border-hover)]">
                     Список
                 </a>
                 <a href="{{ route('cases.create') }}"
-                   class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white transition ease-in-out duration-150">
+                   class="dc-btn inline-flex items-center px-[14px] h-9 text-ys-s rounded-2xs font-medium dc-transition bg-dc-blue-100 text-white hover:bg-dc-blue-200">
                     + Кейс
                 </a>
             </div>
@@ -24,7 +24,8 @@
         <div class="max-w-full mx-auto px-4">
             <div class="flex gap-4 overflow-x-auto pb-4" id="kanban-board" style="min-height: 70vh;">
                 @foreach($statuses as $status)
-                    <div class="flex flex-col min-w-[280px] max-w-[280px] bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg flex-shrink-0 kanban-col"
+                    <div class="flex flex-col min-w-[280px] max-w-[280px] rounded-lg flex-shrink-0 kanban-col border"
+                         style="background-color:var(--color-surface-2);border-color:var(--color-border)"
                          data-status-id="{{ $status->id }}"
                          data-sort-order="{{ $status->sort_order }}"
                          ondragover="event.preventDefault(); this.classList.add('ring-2','ring-indigo-400');"
@@ -32,10 +33,11 @@
                          ondrop="handleDrop(event, {{ $status->id }})">
 
                         {{-- Sticky column header --}}
-                        <div class="sticky top-0 z-10 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 py-2.5 rounded-t-lg">
-                            <div class="font-semibold text-sm text-gray-700 dark:text-gray-200 flex items-center justify-between">
+                        <div class="sticky top-0 z-10 px-3 py-2.5 rounded-t-lg border-b"
+                             style="background-color:var(--color-surface-2);border-color:var(--color-border)">
+                            <div class="font-semibold text-ys-s text-dc flex items-center justify-between">
                                 <span>{{ $status->sort_order }}. {{ $status->name }}</span>
-                                <span class="text-xs text-gray-400 dark:text-gray-500 font-normal ml-1 col-count" data-status-id="{{ $status->id }}">
+                                <span class="text-ys-xs text-dc-secondary font-normal ml-1 col-count" data-status-id="{{ $status->id }}">
                                     ({{ $cases->get($status->id, collect())->count() }})
                                 </span>
                             </div>
@@ -45,7 +47,8 @@
                         <div class="flex-1 overflow-y-auto p-3 space-y-2 kanban-cards" id="col-{{ $status->id }}">
                             @php($list = $cases->get($status->id, collect()))
                             @forelse($list as $c)
-                                <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md p-3 shadow-sm cursor-grab active:cursor-grabbing kanban-card transition-shadow hover:shadow-md"
+                                <div class="rounded-md p-3 shadow-sm cursor-grab active:cursor-grabbing kanban-card dc-transition hover:shadow-card border"
+                                     style="background-color:var(--color-surface);border-color:var(--color-border)"
                                      draggable="true"
                                      data-case-id="{{ $c->id }}"
                                      data-pipeline-status-id="{{ $c->pipeline_status_id }}"
@@ -53,19 +56,19 @@
                                      ondragend="handleDragEnd(event)">
 
                                     {{-- Title --}}
-                                    <div class="text-sm font-semibold text-gray-800 dark:text-gray-100">
+                                    <div class="text-ys-s font-semibold text-dc">
                                         #{{ $c->id }} {{ $c->title ?: 'Без названия' }}
                                     </div>
 
                                     {{-- Patient --}}
-                                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                    <div class="text-ys-xs text-dc-secondary mt-1">
                                         {{ $c->patient?->full_name }}
                                     </div>
 
                                     {{-- Service status badge (overlay) --}}
                                     <div class="mt-2" id="svc-badge-{{ $c->id }}">
                                         @if($c->serviceStatus)
-                                            <span class="inline-block px-2 py-0.5 text-xs rounded-full bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300 font-medium">
+                                            <span class="inline-block px-2 py-0.5 text-ys-xs rounded-full bg-dc-orange-30 text-dc-orange-100 font-medium">
                                                 ⏸ {{ $c->serviceStatus->name }}
                                             </span>
                                         @endif
@@ -73,7 +76,8 @@
 
                                     {{-- Service status dropdown --}}
                                     <div class="mt-2">
-                                        <select class="text-xs border border-gray-200 dark:border-gray-600 rounded px-1 py-0.5 w-full bg-white dark:bg-gray-600 dark:text-gray-200 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 service-status-select"
+                                        <select class="text-ys-xs border rounded px-1 py-0.5 w-full bg-surface dc-transition focus:outline-none service-status-select"
+                                                style="border-color:var(--color-border);color:var(--color-text)"
                                                 data-case-id="{{ $c->id }}"
                                                 onchange="updateServiceStatus(this)">
                                             <option value="">— Без паузы —</option>
@@ -87,13 +91,13 @@
                                     </div>
 
                                     {{-- Priority & date --}}
-                                    <div class="text-xs text-gray-400 dark:text-gray-500 mt-2 flex justify-between">
+                                    <div class="text-ys-xs text-dc-secondary mt-2 flex justify-between">
                                         <span>Приоритет: {{ $c->priority }}</span>
                                         <span>{{ $c->updated_at?->format('d.m H:i') }}</span>
                                     </div>
                                 </div>
                             @empty
-                                <div class="flex flex-col items-center justify-center py-8 text-gray-300 dark:text-gray-600 kanban-empty">
+                                <div class="flex flex-col items-center justify-center py-8 text-dc-disabled kanban-empty">
                                     <svg class="h-8 w-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                     </svg>
