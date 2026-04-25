@@ -46,6 +46,19 @@ Open http://localhost:8000 and log in with `admin@medical07.local` / `ChangeMe12
 8. `2026_04_24_195336_create_medical_cases_table` — original cases table
 9. `2026_04_24_200000_update_cases_pipeline_service_status` — renames `case_status_id` → `pipeline_status_id`, adds `service_status_id`
 10. `2026_04_24_200100_create_case_status_histories_table` — audit log for status transitions
+11. `2026_04_25_100000_create_partner_layers_table` — partner network layer reference
+12. `2026_04_25_100100_create_niches_table` — medical niche reference
+13. `2026_04_25_100200_create_countries_table` — country directory
+14. `2026_04_25_100300_create_country_directions_table` — per-country guidance
+15. `2026_04_25_100400_create_partners_table` — partner records
+16. `2026_04_25_100500_create_niche_partner_table` — partner ↔ niche pivot
+17. `2026_04_25_100600_create_country_partner_table` — partner ↔ country pivot
+18. `2026_04_25_100700_create_case_partner_table` — case ↔ partner pivot
+19. `2026_04_25_100800_create_verification_checklists_table` — verification templates
+20. `2026_04_25_100900_create_verification_checklist_items_table` — checklist items
+21. `2026_04_25_101000_create_partner_verifications_table` — per-partner verification instances
+22. `2026_04_25_101100_create_partner_verification_items_table` — per-item tracking
+23. `2026_04_25_101200_create_message_templates_table` — message templates
 
 ## RBAC Roles
 
@@ -69,6 +82,49 @@ Open http://localhost:8000 and log in with `admin@medical07.local` / `ChangeMe12
 
 - **Pipeline statuses** (is_service=false, sort_order 1–15): represent the main workflow stages shown as Kanban columns.
 - **Service/pause statuses** (is_service=true, sort_order 101+): overlay badges shown on cards without changing the pipeline stage (e.g. "Ожидаю клиента", "Стоп").
+
+## Partner Knowledge Base
+
+The CRM includes a hybrid partner knowledge base + partner records system based on `set.md`.
+
+### Running migrations and seeding demo data
+
+```bash
+cd crm
+
+# Run all migrations (includes partner KB tables)
+php artisan migrate
+
+# Seed all data including partner knowledge base
+php artisan db:seed
+```
+
+The `db:seed` command will populate:
+- **3 partner layers** — Clinic/IPO, Translator, Medical Curator
+- **5 niches** — Oncology, Neurosurgery/Orthopedics, Cardiology, Rare/Genetics, Reproductive/IVF
+- **8 countries** — Turkey, Israel, Germany, Spain, UAE, France, South Korea, Italy
+- **Country directions** — per-country "what to look for" and search query hints
+- **Verification checklists** — clinic, translator, curator templates from `set.md`
+- **Message templates** — email to clinic (EN), WhatsApp (RU), Telegram (RU), letter to translator (RU), letter to curator (RU)
+- **Demo partners** — 1 clinic (Turkey, status: new), 1 translator, 1 curator with pending verification instances
+
+### Partner tables
+
+| Table | Description |
+|-------|-------------|
+| `partner_layers` | 3-layer network structure |
+| `niches` | Medical niche reference |
+| `countries` | Country directory |
+| `country_directions` | Per-country guidance and search tips |
+| `partners` | Actual partner records (clinic/translator/curator) |
+| `niche_partner` | Partner ↔ niche pivot |
+| `country_partner` | Partner ↔ country pivot (multi-country) |
+| `case_partner` | Case ↔ partner pivot |
+| `verification_checklists` | Verification templates |
+| `verification_checklist_items` | Checklist item templates |
+| `partner_verifications` | Per-partner verification instances |
+| `partner_verification_items` | Per-item completion tracking |
+| `message_templates` | Email/WhatsApp/Telegram message templates |
 
 
 
