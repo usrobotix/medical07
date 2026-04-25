@@ -1,0 +1,48 @@
+название: Charité — Universitätsmedizin Berlin
+страна: Германия
+город: Берлин
+направление: Нейрохирургия / Ортопедия
+адрес: Charitéplatz 1, 10117 Berlin, Germany
+
+контакты:
+  сайт: https://www.charite.de/en
+  телефон: "+49 30 450 50"
+  email: international@charite.de
+  страница_для_иностранных_пациентов: https://www.charite.de/en/patients-and-visitors/international-patients
+
+приём_иностранцев:
+  статус: да — International Patients Service
+  источник_url: https://www.charite.de/en/patients-and-visitors/international-patients
+
+приём_пациентов_из_РФ:
+  статус: требует уточнения — санкционные ограничения могут влиять на платёжный процесс
+  источник_url: https://www.charite.de/en/patients-and-visitors/international-patients
+
+режим_работы:
+  клиника: 24/7 (стационар), International Patients Service Пн–Пт 09:00–16:00
+
+дата_последней_проверки: "2026-04-25"
+
+ключевые_услуги:
+  - Нейрохирургия (опухоли мозга и спинного мозга, AVM)
+  - Спинальная хирургия (стеноз, грыжи, сколиоз)
+  - Ортопедия и эндопротезирование
+  - Неврология и нейрореабилитация
+  - Онлайн второе мнение нейрохирурга
+  - Интраоперационный МРТ
+
+врачи:
+  - должность: Профессор нейрохирургии
+    специализация: Опухоли ЦНС, минимально-инвазивная нейрохирургия
+    язык_приёма: EN, DE
+    примечание: конкретные имена уточняются через International Service
+
+цены:
+  онлайн_второе_мнение: от 700 EUR
+  очная_консультация: от 400 EUR
+  примечание: официальный счёт; банковский перевод (SEPA/SWIFT); предоплата обязательна
+
+отзывы: []
+
+источники:
+  - https://www.charite.de/en/patients-and-visitors/international-patients

@@ -1,0 +1,50 @@
+название: Samsung Medical Center
+страна: Южная Корея
+город: Сеул
+направление: Онкология
+адрес: 81 Irwon-ro, Gangnam-gu, Seoul, 06351, Republic of Korea
+
+контакты:
+  сайт: https://www.samsunghospital.com/home/main/index.do
+  телефон: "+82 2-3410-2114"
+  email: international@smc.samsung.co.kr
+  страница_для_иностранных_пациентов: https://www.samsunghospital.com/en/home/main/index.do
+
+приём_иностранцев:
+  статус: да — International Health Services
+  источник_url: https://www.samsunghospital.com/en/home/main/index.do
+
+приём_пациентов_из_РФ:
+  статус: да — принимают пациентов из России и СНГ; русскоязычные координаторы
+  источник_url: https://www.samsunghospital.com/en/home/main/index.do
+
+режим_работы:
+  клиника: 24/7 (стационар), International Services Пн–Пт 08:00–17:00
+
+дата_последней_проверки: "2026-04-25"
+
+ключевые_услуги:
+  - Онкология (рак желудка, рак лёгкого, колоректальный, рак щитовидной железы)
+  - Роботизированная хирургия (da Vinci)
+  - Протонная терапия
+  - Молекулярная диагностика (NGS)
+  - Клинические исследования
+  - Онлайн второе мнение онколога
+  - Трансплантация органов (печень, почки)
+
+врачи:
+  - должность: Профессор онкологии
+    специализация: Рак желудка, колоректальный рак, хирургическая онкология
+    язык_приёма: EN, KO
+    примечание: конкретные имена уточняются через International Health Services
+
+цены:
+  онлайн_второе_мнение: от 500 USD
+  очная_консультация: от 350 USD
+  примечание: официальный счёт; банковский перевод или карта
+
+отзывы: []
+
+источники:
+  - https://www.samsunghospital.com/en/home/main/index.do
+  - https://www.newsweek.com/rankings/worlds-best-hospitals

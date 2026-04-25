@@ -1,0 +1,49 @@
+название: Heidelberg University Hospital
+страна: Германия
+город: Гейдельберг
+направление: Онкология
+адрес: Im Neuenheimer Feld 400, 69120 Heidelberg, Germany
+
+контакты:
+  сайт: https://www.uniklinikum-heidelberg.de/en
+  телефон: "+49 6221 56-36000"
+  email: international@med.uni-heidelberg.de
+  страница_для_иностранных_пациентов: https://www.uniklinikum-heidelberg.de/en/international-patients
+
+приём_иностранцев:
+  статус: да — International Patient Service
+  источник_url: https://www.uniklinikum-heidelberg.de/en/international-patients
+
+приём_пациентов_из_РФ:
+  статус: требует уточнения — санкционные ограничения могут влиять на платёжный процесс
+  источник_url: https://www.uniklinikum-heidelberg.de/en/international-patients
+
+режим_работы:
+  клиника: 24/7 (стационар), International Service Пн–Пт 09:00–16:00
+
+дата_последней_проверки: "2026-04-25"
+
+ключевые_услуги:
+  - Онкология (Национальный онкологический центр NCT Heidelberg)
+  - Протонная терапия (HIT — уникальная в Европе)
+  - Радиохирургия
+  - Онкоиммунология и клинические исследования
+  - Рак поджелудочной железы, рак печени, опухоли ЦНС
+  - Онлайн второе мнение онколога
+
+врачи:
+  - должность: Профессор онкологии (NCT Heidelberg)
+    специализация: Таргетная терапия, клинические исследования
+    язык_приёма: EN, DE
+    примечание: конкретные имена уточняются через International Service
+
+цены:
+  онлайн_второе_мнение: от 800 EUR
+  очная_консультация: от 500 EUR
+  примечание: официальный счёт; предоплата; SWIFT-перевод
+
+отзывы: []
+
+источники:
+  - https://www.uniklinikum-heidelberg.de/en/international-patients
+  - https://www.nct-heidelberg.de/en
