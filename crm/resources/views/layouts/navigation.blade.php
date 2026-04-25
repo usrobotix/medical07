@@ -29,7 +29,7 @@
                     </x-nav-link>
 
                     <!-- Справочники Dropdown -->
-                    <div class="hidden sm:flex sm:items-center" x-data="{ kbOpen: false }" @click.away="kbOpen = false">
+                    <div class="relative flex items-center" x-data="{ kbOpen: false }" @click.away="kbOpen = false">
                         <button
                             @click="kbOpen = !kbOpen"
                             :class="{ 'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100': {{ request()->routeIs('kb.*') ? 'true' : 'false' }}, 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700': {{ request()->routeIs('kb.*') ? 'false' : 'true' }} }"
@@ -48,7 +48,7 @@
                             x-transition:leave="transition ease-in duration-75"
                             x-transition:leave-start="transform opacity-100 scale-100"
                             x-transition:leave-end="transform opacity-0 scale-95"
-                            class="absolute top-16 mt-0.5 z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg py-1 min-w-max"
+                            class="absolute top-full mt-1 left-0 z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg py-1 min-w-max"
                             style="display: none;"
                         >
                             <a href="{{ route('kb.partners.index') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 {{ request()->routeIs('kb.partners.*') ? 'font-semibold' : '' }}">Партнёры</a>
