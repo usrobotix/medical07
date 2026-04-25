@@ -2,4 +2,5 @@
 !public/
 !.gitignore
 !research/
-!research/**
+!research/.gitkeep
+!research/README.md
