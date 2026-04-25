@@ -1,0 +1,31 @@
+название: American Hospital Dubai
+город: Дубай
+страна: ОАЭ
+направление: Кардиология
+адрес: "Oud Metha Road, Dubai, UAE"
+контакты:
+  сайт: https://www.ahdubai.com
+  страница_для_иностранных_пациентов: https://www.ahdubai.com/en/international-patients
+  email: international@ahdubai.com
+  телефон: "+971 4 309 0300"
+ключевые_услуги:
+  - Кардиология
+  - Кардиохирургия
+  - Интервенционная кардиология
+приём_иностранцев:
+  статус: "да"
+  источник_url: https://www.ahdubai.com/en/international-patients
+  примечание: не указано
+приём_пациентов_из_РФ:
+  статус: "да"
+  источник_url: https://www.ahdubai.com/en/international-patients
+  примечание: Русскоязычные координаторы доступны
+режим_работы:
+  клиника: Круглосуточно
+  отдел_международных_пациентов: Пн-Пт 08:00-18:00
+  источник_url: https://www.ahdubai.com/en/international-patients
+источники:
+  - url: https://www.ahdubai.com/en/international-patients
+    описание: Официальный сайт
+    дата_проверки: 2025-02-08
+дата_последней_проверки: 2025-02-08

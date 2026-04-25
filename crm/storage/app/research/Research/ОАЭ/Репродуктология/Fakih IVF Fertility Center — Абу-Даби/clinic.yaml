@@ -1,0 +1,31 @@
+название: Fakih IVF Fertility Center
+город: Абу-Даби
+страна: ОАЭ
+направление: Репродуктология
+адрес: "Al Nahda Street, Abu Dhabi, UAE"
+контакты:
+  сайт: https://www.fakihivf.com
+  страница_для_иностранных_пациентов: https://www.fakihivf.com/international-patients
+  email: info@fakihivf.com
+  телефон: "+971 2 635 5633"
+ключевые_услуги:
+  - ЭКО
+  - ИКСИ
+  - Донорство яйцеклеток
+приём_иностранцев:
+  статус: "да"
+  источник_url: https://www.fakihivf.com/international-patients
+  примечание: не указано
+приём_пациентов_из_РФ:
+  статус: "да"
+  источник_url: https://www.fakihivf.com/international-patients
+  примечание: не указано
+режим_работы:
+  клиника: Пн-Сб 08:00-20:00
+  отдел_международных_пациентов: Пн-Пт 09:00-18:00
+  источник_url: https://www.fakihivf.com/international-patients
+источники:
+  - url: https://www.fakihivf.com/international-patients
+    описание: Официальный сайт Fakih IVF
+    дата_проверки: 2025-02-12
+дата_последней_проверки: 2025-02-12

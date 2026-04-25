@@ -1,0 +1,31 @@
+название: Liv Hospital Vadistanbul
+город: Стамбул
+страна: Турция
+направление: Нейрохирургия
+адрес: "Ayazağa Mahallesi, Cendere Yolu No:2, 34396 Sarıyer/İstanbul, Turkey"
+контакты:
+  сайт: https://www.livhospital.com
+  страница_для_иностранных_пациентов: https://www.livhospital.com/en
+  email: international@livhospital.com
+  телефон: "+90 212 999 90 00"
+ключевые_услуги:
+  - Нейрохирургия
+  - Спинальная хирургия
+  - Лечение инсульта
+приём_иностранцев:
+  статус: "да"
+  источник_url: https://www.livhospital.com/en
+  примечание: не указано
+приём_пациентов_из_РФ:
+  статус: "да"
+  источник_url: https://www.livhospital.com/en
+  примечание: не указано
+режим_работы:
+  клиника: Круглосуточно
+  отдел_международных_пациентов: Пн-Пт 09:00-17:00
+  источник_url: https://www.livhospital.com/en
+источники:
+  - url: https://www.livhospital.com/en
+    описание: Официальный сайт LIV Hospital
+    дата_проверки: 2025-01-30
+дата_последней_проверки: 2025-01-30

@@ -1,0 +1,33 @@
+название: Universitätsklinikum Heidelberg
+город: Гейдельберг
+страна: Германия
+направление: Онкология
+адрес: Im Neuenheimer Feld 672, 69120 Heidelberg, Germany
+контакты:
+  сайт: https://www.klinikum.uni-heidelberg.de
+  страница_для_иностранных_пациентов: https://www.klinikum.uni-heidelberg.de/international
+  email: international@med.uni-heidelberg.de
+  телефон: "+49 6221 56-36000"
+ключевые_услуги:
+  - Онкохирургия
+  - Химиотерапия
+  - Радиотерапия
+  - Иммунотерапия
+  - Трансплантация костного мозга
+приём_иностранцев:
+  статус: "да"
+  источник_url: https://www.klinikum.uni-heidelberg.de/international
+  примечание: Специализированный отдел для иностранных пациентов
+приём_пациентов_из_РФ:
+  статус: "да"
+  источник_url: https://www.klinikum.uni-heidelberg.de/international
+  примечание: Русскоязычные координаторы доступны
+режим_работы:
+  клиника: Пн-Пт 08:00-18:00
+  отдел_международных_пациентов: Пн-Пт 09:00-17:00
+  источник_url: https://www.klinikum.uni-heidelberg.de/international
+источники:
+  - url: https://www.klinikum.uni-heidelberg.de/international
+    описание: Официальный сайт международного отдела
+    дата_проверки: 2025-01-15
+дата_последней_проверки: 2025-01-15

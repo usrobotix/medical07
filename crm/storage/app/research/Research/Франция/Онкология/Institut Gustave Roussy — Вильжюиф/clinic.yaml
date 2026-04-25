@@ -1,0 +1,32 @@
+название: Institut Gustave Roussy
+город: Вильжюиф
+страна: Франция
+направление: Онкология
+адрес: "114 Rue Édouard Vaillant, 94800 Villejuif, France"
+контакты:
+  сайт: https://www.gustaveroussy.fr
+  страница_для_иностранных_пациентов: https://www.gustaveroussy.fr/en/international-patients
+  email: international@gustaveroussy.fr
+  телефон: "+33 1 42 11 42 11"
+ключевые_услуги:
+  - Онкология всех типов
+  - Клинические испытания
+  - Иммунотерапия
+  - Генная терапия
+приём_иностранцев:
+  статус: "да"
+  источник_url: https://www.gustaveroussy.fr/en/international-patients
+  примечание: Ведущий онкологический центр Европы
+приём_пациентов_из_РФ:
+  статус: "уточнить"
+  источник_url: https://www.gustaveroussy.fr/en/international-patients
+  примечание: требует уточнения
+режим_работы:
+  клиника: Пн-Пт 08:00-20:00
+  отдел_международных_пациентов: Пн-Пт 09:00-17:00
+  источник_url: https://www.gustaveroussy.fr/en/international-patients
+источники:
+  - url: https://www.gustaveroussy.fr/en/international-patients
+    описание: Страница для международных пациентов
+    дата_проверки: 2025-01-21
+дата_последней_проверки: 2025-01-21

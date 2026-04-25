@@ -1,0 +1,32 @@
+название: Istituto Europeo di Oncologia
+город: Милан
+страна: Италия
+направление: Онкология
+адрес: "Via Ripamonti 435, 20141 Milano, Italy"
+контакты:
+  сайт: https://www.ieo.it
+  страница_для_иностранных_пациентов: https://www.ieo.it/en/for-patients/international-patients
+  email: international@ieo.it
+  телефон: "+39 02 5748 9455"
+ключевые_услуги:
+  - Онкохирургия
+  - Радиотерапия
+  - Химиотерапия
+  - Иммунотерапия
+приём_иностранцев:
+  статус: "да"
+  источник_url: https://www.ieo.it/en/for-patients/international-patients
+  примечание: Специализированный отдел для иностранных пациентов
+приём_пациентов_из_РФ:
+  статус: "да"
+  источник_url: https://www.ieo.it/en/for-patients/international-patients
+  примечание: не указано
+режим_работы:
+  клиника: Пн-Пт 07:30-20:00
+  отдел_международных_пациентов: Пн-Пт 09:00-17:00
+  источник_url: https://www.ieo.it/en/for-patients/international-patients
+источники:
+  - url: https://www.ieo.it/en/for-patients/international-patients
+    описание: Страница для международных пациентов IEO
+    дата_проверки: 2025-01-20
+дата_последней_проверки: 2025-01-20
