@@ -11,7 +11,6 @@ use App\Models\PartnerResearchProfile;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Symfony\Component\Yaml\Yaml;
 
 class ImportClinicResearch extends Command
@@ -27,9 +26,12 @@ class ImportClinicResearch extends Command
     private const DIRECTION_TO_NICHE = [
         'Онкология'                    => 'oncology',
         'Нейрохирургия / Ортопедия'    => 'neurosurgery_orthopedics',
+        'Нейрохирургия'                => 'neurosurgery_orthopedics',
         'Кардиология'                  => 'cardiology',
         'Редкие диагнозы / Генетика'   => 'rare_genetics',
+        'Редкие диагнозы'              => 'rare_genetics',
         'Репродуктология / ЭКО'        => 'reproductive_ivf',
+        'Репродуктология'              => 'reproductive_ivf',
     ];
 
     private const COUNTRY_ISO = [
@@ -50,7 +52,7 @@ class ImportClinicResearch extends Command
     public function handle(): int
     {
         $sourcePath = $this->option('source')
-            ?? storage_path('app/research');
+            ?? config('research.source_path', storage_path('app/research'));
 
         $dryRun = (bool) $this->option('dry-run');
 
@@ -58,6 +60,11 @@ class ImportClinicResearch extends Command
             $this->error("Research directory not found: {$sourcePath}");
             $this->line('Run with --source=/path/to/Research or place data in storage/app/research/');
             return self::FAILURE;
+        }
+
+        // Auto-detect nested Research/ subdirectory (if data was placed in storage/app/research/Research/)
+        if (is_dir($sourcePath . '/Research')) {
+            $sourcePath = $sourcePath . '/Research';
         }
 
         $this->info("Importing from: {$sourcePath}" . ($dryRun ? ' [DRY RUN]' : ''));
@@ -120,7 +127,7 @@ class ImportClinicResearch extends Command
         Country $country,
         Niche $niche,
         PartnerLayer $layer,
-        string $sourcePath,
+        string $rootPath,
         bool $dryRun
     ): void {
         $yamlFile   = $clinicDir . '/clinic.yaml';
@@ -140,11 +147,11 @@ class ImportClinicResearch extends Command
             return;
         }
 
-        $name       = trim($data['название'] ?? basename($clinicDir));
-        $city       = trim($data['город'] ?? '');
-        $direction  = trim($data['направление'] ?? '');
-        $slug       = $this->buildSlug($country->name_ru, $direction, $name, $city);
-        $sourcePath = str_replace(storage_path('app/research') . '/', '', $clinicDir);
+        $name        = trim($data['название'] ?? basename($clinicDir));
+        $city        = trim($data['город'] ?? '');
+        $direction   = trim($data['направление'] ?? '');
+        $slug        = $this->buildSlug($country->name_ru, $direction, $name, $city);
+        $relPath     = ltrim(str_replace($rootPath, '', $clinicDir), '/');
 
         $reviewMd   = file_exists($reviewFile) ? file_get_contents($reviewFile) : null;
 
@@ -157,7 +164,7 @@ class ImportClinicResearch extends Command
         try {
             DB::transaction(function () use (
                 $data, $name, $city, $slug, $country, $niche, $layer,
-                $sourcePath, $reviewMd, $clinicDir
+                $relPath, $reviewMd
             ) {
                 $contacts = $data['контакты'] ?? [];
 
@@ -175,7 +182,7 @@ class ImportClinicResearch extends Command
                         $contacts['страница_для_иностранных_пациентов'] ?? null
                     ),
                     'status'                 => 'new',
-                    'research_source_path'   => $sourcePath,
+                    'research_source_path'   => $relPath,
                     'research_imported_at'   => now(),
                     'last_checked_date'      => $this->parseDate($data['дата_последней_проверки'] ?? null),
                     'notes'                  => $this->nullIfUnknown($data['примечания'] ?? null),
@@ -198,7 +205,7 @@ class ImportClinicResearch extends Command
                 $partner->countries()->syncWithoutDetaching([$country->id]);
 
                 // Upsert research profile
-                $profile = $partner->researchProfile ?? new PartnerResearchProfile();
+                $profile = $partner->researchProfile()->firstOrNew([]);
                 $profile->partner_id       = $partner->id;
                 $profile->key_services     = $this->parseList($data['ключевые_услуги'] ?? []);
                 $profile->accepts_foreigners = $this->parseAcceptance($data['приём_иностранцев'] ?? []);
@@ -212,6 +219,8 @@ class ImportClinicResearch extends Command
                 $profile->sources          = $this->parseSources($data['источники'] ?? []);
                 $profile->review_md        = $reviewMd;
                 $profile->save();
+
+                $this->line("        ✓ {$name} / {$city}");
             });
         } catch (\Throwable $e) {
             $this->error("      Error importing {$name}: " . $e->getMessage());
