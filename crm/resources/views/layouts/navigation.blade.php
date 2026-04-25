@@ -48,7 +48,7 @@
                             x-transition:leave="transition ease-in duration-75"
                             x-transition:leave-start="transform opacity-100 scale-100"
                             x-transition:leave-end="transform opacity-0 scale-95"
-                            class="absolute top-full mt-1 left-0 z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg py-1 min-w-max"
+                            class="absolute top-full mt-1 left-0 z-50 origin-top bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg py-1 min-w-max max-h-[60vh] overflow-y-auto"
                             style="display: none;"
                         >
                             <a href="{{ route('kb.partners.index') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 {{ request()->routeIs('kb.partners.*') ? 'font-semibold' : '' }}">Партнёры</a>

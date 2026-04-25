@@ -28,8 +28,8 @@
                         </select>
                     </div>
                     <div class="flex gap-2">
-                        <button type="submit" class="px-4 py-2 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">Применить</button>
-                        <a href="{{ route('kb.verification-checklists.index') }}" class="px-4 py-2 text-sm bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition">Сбросить</a>
+                        <x-kb-apply-button />
+                        <x-kb-reset-link :href="route('kb.verification-checklists.index')" />
                     </div>
                 </form>
             </div>
@@ -52,7 +52,7 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                             @foreach($checklists as $checklist)
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-750">
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
                                     <td class="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">{{ $checklist->name }}</td>
                                     <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
                                         @php $tl = ['clinic' => 'Клиника', 'translator' => 'Переводчик', 'curator' => 'Куратор']; @endphp
