@@ -27,6 +27,46 @@
                     <x-nav-link :href="route('cases.board')" :active="request()->routeIs('cases.board')">
                         Канбан
                     </x-nav-link>
+
+                    <!-- Справочники dropdown -->
+                    <div class="hidden sm:flex sm:items-center">
+                        <x-dropdown align="left" width="48">
+                            <x-slot name="trigger">
+                                <button class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-none
+                                    {{ request()->routeIs('partners.*') || request()->routeIs('countries.*') || request()->routeIs('niches.*') || request()->routeIs('country-directions.*') || request()->routeIs('verification-checklists.*') || request()->routeIs('message-templates.*') || request()->routeIs('partner-verifications.*')
+                                        ? 'border-indigo-400 text-gray-900 dark:text-gray-100'
+                                        : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600' }}">
+                                    Справочники
+                                    <svg class="ms-1 h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </x-slot>
+                            <x-slot name="content">
+                                <x-dropdown-link :href="route('partners.index')">
+                                    Партнёры
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('countries.index')">
+                                    Страны
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('niches.index')">
+                                    Ниши
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('country-directions.index')">
+                                    Направления по странам
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('verification-checklists.index')">
+                                    Чек-листы верификации
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('message-templates.index')">
+                                    Шаблоны сообщений
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('partner-verifications.index')">
+                                    Проверки партнёров
+                                </x-dropdown-link>
+                            </x-slot>
+                        </x-dropdown>
+                    </div>
                 </div>
             </div>
 
@@ -125,6 +165,32 @@
             <x-responsive-nav-link :href="route('cases.board')" :active="request()->routeIs('cases.board')">
                 Канбан
             </x-responsive-nav-link>
+
+            <!-- KB sub-section -->
+            <div class="pt-2 pb-1 border-t border-gray-100 dark:border-gray-700">
+                <p class="px-4 py-1 text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider font-semibold">Справочники</p>
+                <x-responsive-nav-link :href="route('partners.index')" :active="request()->routeIs('partners.*')">
+                    Партнёры
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('countries.index')" :active="request()->routeIs('countries.*')">
+                    Страны
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('niches.index')" :active="request()->routeIs('niches.*')">
+                    Ниши
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('country-directions.index')" :active="request()->routeIs('country-directions.*')">
+                    Направления по странам
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('verification-checklists.index')" :active="request()->routeIs('verification-checklists.*')">
+                    Чек-листы верификации
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('message-templates.index')" :active="request()->routeIs('message-templates.*')">
+                    Шаблоны сообщений
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('partner-verifications.index')" :active="request()->routeIs('partner-verifications.*')">
+                    Проверки партнёров
+                </x-responsive-nav-link>
+            </div>
         </div>
 
         <!-- Responsive Settings Options -->
