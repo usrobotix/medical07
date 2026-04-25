@@ -7,7 +7,7 @@
             </div>
             @auth
                 @if(auth()->user()->hasAnyRole(['admin', 'manager']))
-                    <x-dc-button variant="contour" size="s" href="{{ route('kb.message-templates.edit', $messageTemplate) }}">Редактировать</x-dc-button>
+                    <x-dc.button variant="contour" size="s" href="{{ route('kb.message-templates.edit', $messageTemplate) }}">Редактировать</x-dc.button>
                 @endif
             @endauth
         </div>
@@ -16,7 +16,7 @@
     <div class="py-8">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <x-dc-card padding="lg" shadow="card">
+            <x-dc.card padding="lg" shadow="card">
                 <h3 class="text-ys-m-s font-semibold text-dc mb-4">Параметры шаблона</h3>
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
                     <div>
@@ -41,12 +41,12 @@
                         </div>
                     @endif
                 </dl>
-            </x-dc-card>
+            </x-dc.card>
 
-            <x-dc-card padding="lg" shadow="card">
+            <x-dc.card padding="lg" shadow="card">
                 <h3 class="text-ys-s font-semibold text-dc mb-3">Текст сообщения</h3>
                 <pre class="text-ys-s text-dc bg-dc-gray-10 p-4 rounded-2xs overflow-x-auto whitespace-pre-wrap font-mono border border-dc-gray-30">{{ $messageTemplate->body }}</pre>
-            </x-dc-card>
+            </x-dc.card>
 
         </div>
     </div>

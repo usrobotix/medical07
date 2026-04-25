@@ -12,7 +12,7 @@
                 @csrf
                 @method('PATCH')
 
-                <x-dc-card padding="lg" shadow="card">
+                <x-dc.card padding="lg" shadow="card">
                     <h3 class="text-ys-s font-semibold text-dc mb-5">Основная информация</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="sm:col-span-2">
@@ -80,9 +80,9 @@
                             @endforeach
                         </div>
                     </div>
-                </x-dc-card>
+                </x-dc.card>
 
-                <x-dc-card padding="lg" shadow="card">
+                <x-dc.card padding="lg" shadow="card">
                     <h3 class="text-ys-s font-semibold text-dc mb-4">Контакты</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
@@ -110,9 +110,9 @@
                             <input type="url" name="website_url" value="{{ old('website_url', $partner->website_url) }}" class="block w-full h-9 px-4 text-ys-s rounded-2xs border border-dc-gray-30 bg-surface text-dc dc-transition focus:outline-none focus-visible:ring-2 focus-visible:ring-dc-yellow-100">
                         </div>
                     </div>
-                </x-dc-card>
+                </x-dc.card>
 
-                <x-dc-card padding="lg" shadow="card">
+                <x-dc.card padding="lg" shadow="card">
                     <h3 class="text-ys-s font-semibold text-dc mb-4">SLA и финансы</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
@@ -139,22 +139,22 @@
                             <textarea name="pricing_notes" rows="2" class="block w-full p-3 text-ys-s rounded-2xs border border-dc-gray-30 bg-surface text-dc dc-transition focus:outline-none focus-visible:ring-2 focus-visible:ring-dc-yellow-100">{{ old('pricing_notes', $partner->pricing_notes) }}</textarea>
                         </div>
                     </div>
-                </x-dc-card>
+                </x-dc.card>
 
-                <x-dc-card padding="lg" shadow="card">
+                <x-dc.card padding="lg" shadow="card">
                     <label class="block text-ys-xs font-medium text-dc-secondary mb-1">Заметки</label>
                     <textarea name="notes" rows="4" class="block w-full p-3 text-ys-s rounded-2xs border border-dc-gray-30 bg-surface text-dc dc-transition focus:outline-none focus-visible:ring-2 focus-visible:ring-dc-yellow-100">{{ old('notes', $partner->notes) }}</textarea>
-                </x-dc-card>
+                </x-dc.card>
 
                 <div class="flex justify-between items-center">
                     <form method="POST" action="{{ route('kb.partners.destroy', $partner) }}" onsubmit="return confirm('Удалить партнёра?')">
                         @csrf
                         @method('DELETE')
-                        <x-dc-button type="submit" variant="danger" size="s">Удалить</x-dc-button>
+                        <x-dc.button type="submit" variant="danger" size="s">Удалить</x-dc.button>
                     </form>
                     <div class="flex gap-3">
-                        <x-dc-button variant="contour" size="s" href="{{ route('kb.partners.show', $partner) }}">Отмена</x-dc-button>
-                        <x-dc-button type="submit" variant="action" size="s">Сохранить</x-dc-button>
+                        <x-dc.button variant="contour" size="s" href="{{ route('kb.partners.show', $partner) }}">Отмена</x-dc.button>
+                        <x-dc.button type="submit" variant="action" size="s">Сохранить</x-dc.button>
                     </div>
                 </div>
             </form>

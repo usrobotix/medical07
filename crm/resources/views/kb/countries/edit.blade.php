@@ -11,7 +11,7 @@
             <form method="POST" action="{{ route('kb.countries.update', $country) }}">
                 @csrf
                 @method('PATCH')
-                <x-dc-card padding="lg" shadow="card">
+                <x-dc.card padding="lg" shadow="card">
                     <div class="space-y-4">
                         <div>
                             <label class="block text-ys-xs font-medium text-dc-secondary mb-1">ISO2 код <span class="text-dc-red-100">*</span></label>
@@ -36,15 +36,15 @@
                             <form method="POST" action="{{ route('kb.countries.destroy', $country) }}" onsubmit="return confirm('Удалить страну?')">
                                 @csrf
                                 @method('DELETE')
-                                <x-dc-button type="submit" variant="danger" size="s">Удалить</x-dc-button>
+                                <x-dc.button type="submit" variant="danger" size="s">Удалить</x-dc.button>
                             </form>
                             <div class="flex gap-3">
-                                <x-dc-button variant="contour" size="s" href="{{ route('kb.countries.show', $country) }}">Отмена</x-dc-button>
-                                <x-dc-button type="submit" variant="action" size="s">Сохранить</x-dc-button>
+                                <x-dc.button variant="contour" size="s" href="{{ route('kb.countries.show', $country) }}">Отмена</x-dc.button>
+                                <x-dc.button type="submit" variant="action" size="s">Сохранить</x-dc.button>
                             </div>
                         </div>
                     </div>
-                </x-dc-card>
+                </x-dc.card>
             </form>
         </div>
     </div>

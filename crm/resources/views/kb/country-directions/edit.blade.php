@@ -11,7 +11,7 @@
             <form method="POST" action="{{ route('kb.country-directions.update', $countryDirection) }}">
                 @csrf
                 @method('PATCH')
-                <x-dc-card padding="lg" shadow="card">
+                <x-dc.card padding="lg" shadow="card">
                     <div class="space-y-4">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
@@ -57,15 +57,15 @@
                             <form method="POST" action="{{ route('kb.country-directions.destroy', $countryDirection) }}" onsubmit="return confirm('Удалить направление?')">
                                 @csrf
                                 @method('DELETE')
-                                <x-dc-button type="submit" variant="danger" size="s">Удалить</x-dc-button>
+                                <x-dc.button type="submit" variant="danger" size="s">Удалить</x-dc.button>
                             </form>
                             <div class="flex gap-3">
-                                <x-dc-button variant="contour" size="s" href="{{ route('kb.country-directions.show', $countryDirection) }}">Отмена</x-dc-button>
-                                <x-dc-button type="submit" variant="action" size="s">Сохранить</x-dc-button>
+                                <x-dc.button variant="contour" size="s" href="{{ route('kb.country-directions.show', $countryDirection) }}">Отмена</x-dc.button>
+                                <x-dc.button type="submit" variant="action" size="s">Сохранить</x-dc.button>
                             </div>
                         </div>
                     </div>
-                </x-dc-card>
+                </x-dc.card>
             </form>
         </div>
     </div>
