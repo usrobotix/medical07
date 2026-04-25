@@ -42,7 +42,7 @@ class PartnerController extends Controller
 
     public function show(Partner $partner)
     {
-        $partner->load(['layer', 'country', 'countries', 'niches', 'verifications.checklist']);
+        $partner->load(['layer', 'country', 'countries', 'niches', 'verifications.checklist', 'researchProfile']);
 
         return view('kb.partners.show', compact('partner'));
     }

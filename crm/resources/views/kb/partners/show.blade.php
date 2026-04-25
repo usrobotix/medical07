@@ -196,6 +196,116 @@
                 @endif
             </x-dc.card>
 
+            {{-- Research Profile --}}
+            @if($partner->researchProfile)
+                @php $rp = $partner->researchProfile; @endphp
+                <x-dc.card padding="lg" shadow="card">
+                    <h3 class="text-ys-m-s font-semibold text-dc mb-4">Research — данные исследования</h3>
+
+                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 mb-4">
+                        <div>
+                            <dt class="text-ys-xs text-dc-secondary">Направление</dt>
+                            <dd class="text-ys-s text-dc mt-0.5">{{ $rp->direction ?? '—' }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-ys-xs text-dc-secondary">Последняя проверка</dt>
+                            <dd class="text-ys-s text-dc mt-0.5">{{ $rp->last_checked_at?->format('d.m.Y') ?? '—' }}</dd>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <dt class="text-ys-xs text-dc-secondary">Адрес</dt>
+                            <dd class="text-ys-s text-dc mt-0.5">{{ $rp->address ?? '—' }}</dd>
+                        </div>
+                        @if($rp->international_page_url)
+                            <div class="sm:col-span-2">
+                                <dt class="text-ys-xs text-dc-secondary">Страница для иностранных пациентов</dt>
+                                <dd class="text-ys-s mt-0.5">
+                                    <a href="{{ $rp->international_page_url }}" target="_blank" rel="noopener noreferrer" class="text-dc-primary hover:underline dc-transition break-all">{{ $rp->international_page_url }}</a>
+                                </dd>
+                            </div>
+                        @endif
+                        <div>
+                            <dt class="text-ys-xs text-dc-secondary">Приём иностранцев</dt>
+                            <dd class="text-ys-s text-dc mt-0.5">
+                                {{ $rp->accepts_foreigners_status ?? '—' }}
+                                @if($rp->accepts_foreigners_source_url)
+                                    — <a href="{{ $rp->accepts_foreigners_source_url }}" target="_blank" rel="noopener noreferrer" class="text-dc-primary hover:underline dc-transition text-ys-xs">источник</a>
+                                @endif
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-ys-xs text-dc-secondary">Приём пациентов из РФ</dt>
+                            <dd class="text-ys-s text-dc mt-0.5">
+                                {{ $rp->accepts_ru_status ?? '—' }}
+                                @if($rp->accepts_ru_source_url)
+                                    — <a href="{{ $rp->accepts_ru_source_url }}" target="_blank" rel="noopener noreferrer" class="text-dc-primary hover:underline dc-transition text-ys-xs">источник</a>
+                                @endif
+                            </dd>
+                        </div>
+                        @if($rp->working_hours)
+                            <div class="sm:col-span-2">
+                                <dt class="text-ys-xs text-dc-secondary">Режим работы</dt>
+                                <dd class="text-ys-s text-dc mt-0.5">{{ $rp->working_hours }}</dd>
+                            </div>
+                        @endif
+                    </dl>
+
+                    @if($rp->key_services && count($rp->key_services) > 0)
+                        <div class="mb-4">
+                            <p class="text-ys-xs text-dc-secondary mb-1">Ключевые услуги</p>
+                            <ul class="text-ys-s text-dc list-disc list-inside space-y-0.5">
+                                @foreach($rp->key_services as $service)
+                                    <li>{{ $service }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    @if($rp->sources && count($rp->sources) > 0)
+                        <div class="mb-4">
+                            <p class="text-ys-xs text-dc-secondary mb-1">Источники</p>
+                            <ul class="text-ys-s space-y-1">
+                                @foreach($rp->sources as $source)
+                                    @php
+                                        // Source can be a string URL or an object {url, описание, дата_проверки}
+                                        if (is_string($source)) {
+                                            $srcUrl  = $source;
+                                            $srcDesc = null;
+                                            $srcDate = null;
+                                        } else {
+                                            $srcUrl  = $source['url'] ?? null;
+                                            $srcDesc = $source['описание'] ?? ($source['description'] ?? null);
+                                            $srcDate = $source['дата_проверки'] ?? ($source['date'] ?? null);
+                                        }
+                                    @endphp
+                                    <li class="text-dc">
+                                        @if($srcUrl && str_starts_with($srcUrl, 'http'))
+                                            <a href="{{ $srcUrl }}" target="_blank" rel="noopener noreferrer" class="text-dc-primary hover:underline dc-transition break-all">{{ $srcUrl }}</a>
+                                        @else
+                                            <span>{{ $srcUrl ?? '—' }}</span>
+                                        @endif
+                                        @if($srcDesc)
+                                            <span class="text-dc-secondary"> — {{ $srcDesc }}</span>
+                                        @endif
+                                        @if($srcDate)
+                                            <span class="text-dc-secondary text-ys-xs"> ({{ $srcDate }})</span>
+                                        @endif
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    @if($rp->review_markdown)
+                        <div>
+                            <p class="text-ys-xs text-dc-secondary mb-2">Обзор клиники</p>
+                            <div class="text-ys-s text-dc bg-dc-subtle rounded p-3 overflow-auto max-h-96">
+                                <pre class="whitespace-pre-wrap font-sans">{{ $rp->review_markdown }}</pre>
+                            </div>
+                        </div>
+                    @endif
+                </x-dc.card>
+            @endif
+
         </div>
     </div>
 </x-app-layout>
