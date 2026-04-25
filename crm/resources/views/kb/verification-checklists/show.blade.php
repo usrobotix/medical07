@@ -1,10 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center gap-3">
-            <a href="{{ route('kb.verification-checklists.index') }}" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-sm">← Чек-листы</a>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ $verificationChecklist->name }}
-            </h2>
+        <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <a href="{{ route('kb.verification-checklists.index') }}" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-sm">← Чек-листы</a>
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                    {{ $verificationChecklist->name }}
+                </h2>
+            </div>
+            @auth
+                @if(auth()->user()->hasAnyRole(['admin', 'manager']))
+                    <a href="{{ route('kb.verification-checklists.edit', $verificationChecklist) }}" class="px-4 py-1.5 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">Редактировать</a>
+                @endif
+            @endauth
         </div>
     </x-slot>
 
@@ -16,18 +23,10 @@
                 <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Информация о чек-листе</h3>
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
                     <div>
-                        <dt class="text-gray-500 dark:text-gray-400">Код</dt>
-                        <dd class="text-gray-900 dark:text-gray-100 font-mono">{{ $verificationChecklist->code }}</dd>
-                    </div>
-                    <div>
                         <dt class="text-gray-500 dark:text-gray-400">Тип партнёра</dt>
                         <dd class="text-gray-900 dark:text-gray-100">
-                            @match($verificationChecklist->partner_type)
-                                'clinic' => 'Клиника',
-                                'translator' => 'Переводчик',
-                                'curator' => 'Куратор',
-                                default => $verificationChecklist->partner_type ?? '—',
-                            @endmatch
+                            @php $typeLabels = ['clinic' => 'Клиника', 'translator' => 'Переводчик', 'curator' => 'Куратор']; @endphp
+                            {{ $typeLabels[$verificationChecklist->partner_type] ?? ($verificationChecklist->partner_type ?? '—') }}
                         </dd>
                     </div>
                     @if($verificationChecklist->description)
@@ -53,9 +52,6 @@
                                 </span>
                                 <div class="flex-1">
                                     <p class="text-sm text-gray-800 dark:text-gray-100">{{ $item->text }}</p>
-                                    @if($item->code)
-                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 font-mono">{{ $item->code }}</p>
-                                    @endif
                                 </div>
                             </li>
                         @endforeach

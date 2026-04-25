@@ -1,8 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            Шаблоны сообщений
-        </h2>
+        <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                Шаблоны сообщений
+            </h2>
+            @auth
+                @if(auth()->user()->hasAnyRole(['admin', 'manager']))
+                    <a href="{{ route('kb.message-templates.create') }}" class="px-4 py-2 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition font-medium">+ Добавить</a>
+                @endif
+            @endauth
+        </div>
     </x-slot>
 
     <div class="py-8">
@@ -73,12 +80,8 @@
                                     </td>
                                     <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ strtoupper($template->language) }}</td>
                                     <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                                        @match($template->target_partner_type)
-                                            'clinic' => 'Клиника',
-                                            'translator' => 'Переводчик',
-                                            'curator' => 'Куратор',
-                                            default => '—',
-                                        @endmatch
+                                        @php $tl = ['clinic' => 'Клиника', 'translator' => 'Переводчик', 'curator' => 'Куратор']; @endphp
+                                        {{ $tl[$template->target_partner_type] ?? '—' }}
                                     </td>
                                     <td class="px-4 py-3 text-right">
                                         <a href="{{ route('kb.message-templates.show', $template) }}" class="text-indigo-600 dark:text-indigo-400 hover:underline text-xs">Подробнее</a>

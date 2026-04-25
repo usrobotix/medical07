@@ -1,10 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center gap-3">
-            <a href="{{ route('kb.country-directions.index') }}" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-sm">← Направления по странам</a>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ $countryDirection->title }}
-            </h2>
+        <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <a href="{{ route('kb.country-directions.index') }}" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-sm">← Направления по странам</a>
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                    {{ $countryDirection->title }}
+                </h2>
+            </div>
+            @auth
+                @if(auth()->user()->hasAnyRole(['admin', 'manager']))
+                    <a href="{{ route('kb.country-directions.edit', $countryDirection) }}" class="px-4 py-1.5 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">Редактировать</a>
+                @endif
+            @endauth
         </div>
     </x-slot>
 

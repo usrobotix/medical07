@@ -1,10 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center gap-3">
-            <a href="{{ route('kb.partners.index') }}" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-sm">← Партнёры</a>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ $partner->name }}
-            </h2>
+        <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <a href="{{ route('kb.partners.index') }}" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-sm">← Партнёры</a>
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                    {{ $partner->name }}
+                </h2>
+            </div>
+            @auth
+                @if(auth()->user()->hasAnyRole(['admin', 'manager']))
+                    <a href="{{ route('kb.partners.edit', $partner) }}" class="px-4 py-1.5 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">Редактировать</a>
+                @endif
+            @endauth
         </div>
     </x-slot>
 
@@ -22,12 +29,8 @@
                     <div>
                         <dt class="text-gray-500 dark:text-gray-400">Тип</dt>
                         <dd class="text-gray-900 dark:text-gray-100">
-                            @match($partner->type)
-                                'clinic' => 'Клиника',
-                                'translator' => 'Переводчик',
-                                'curator' => 'Куратор',
-                                default => $partner->type,
-                            @endmatch
+                            @php $typeLabels = ['clinic' => 'Клиника', 'translator' => 'Переводчик', 'curator' => 'Куратор']; @endphp
+                            {{ $typeLabels[$partner->type] ?? $partner->type }}
                         </dd>
                     </div>
                     <div>
@@ -154,7 +157,14 @@
 
             {{-- Verifications --}}
             <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
-                <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">Проверки верификации</h3>
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100">Проверки верификации</h3>
+                    @auth
+                        @if(auth()->user()->hasAnyRole(['admin', 'manager']))
+                            <a href="{{ route('kb.partner-verifications.create', ['partner_id' => $partner->id]) }}" class="px-3 py-1.5 text-xs bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">+ Новая верификация</a>
+                        @endif
+                    @endauth
+                </div>
                 @if($partner->verifications->isEmpty())
                     <p class="text-sm text-gray-500 dark:text-gray-400">Проверки отсутствуют.</p>
                 @else
@@ -178,6 +188,11 @@
                                         {{ $vLabels[$verification->status] ?? $verification->status }}
                                     </span>
                                     <a href="{{ route('kb.partner-verifications.show', $verification) }}" class="text-indigo-600 dark:text-indigo-400 hover:underline text-xs">Открыть</a>
+                                    @auth
+                                        @if(auth()->user()->hasAnyRole(['admin', 'manager']))
+                                            <a href="{{ route('kb.partner-verifications.edit', $verification) }}" class="text-gray-500 dark:text-gray-400 hover:underline text-xs">Выполнить</a>
+                                        @endif
+                                    @endauth
                                 </div>
                             </li>
                         @endforeach

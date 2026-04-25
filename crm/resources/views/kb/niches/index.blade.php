@@ -1,8 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            Ниши
-        </h2>
+        <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                Ниши
+            </h2>
+            @auth
+                @if(auth()->user()->hasAnyRole(['admin', 'manager']))
+                    <a href="{{ route('kb.niches.create') }}" class="px-4 py-2 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition font-medium">+ Добавить</a>
+                @endif
+            @endauth
+        </div>
     </x-slot>
 
     <div class="py-8">

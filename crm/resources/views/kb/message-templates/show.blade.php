@@ -1,10 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center gap-3">
-            <a href="{{ route('kb.message-templates.index') }}" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-sm">← Шаблоны сообщений</a>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ $messageTemplate->title }}
-            </h2>
+        <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <a href="{{ route('kb.message-templates.index') }}" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-sm">← Шаблоны сообщений</a>
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                    {{ $messageTemplate->title }}
+                </h2>
+            </div>
+            @auth
+                @if(auth()->user()->hasAnyRole(['admin', 'manager']))
+                    <a href="{{ route('kb.message-templates.edit', $messageTemplate) }}" class="px-4 py-1.5 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">Редактировать</a>
+                @endif
+            @endauth
         </div>
     </x-slot>
 
@@ -16,10 +23,6 @@
                 <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Параметры шаблона</h3>
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
                     <div>
-                        <dt class="text-gray-500 dark:text-gray-400">Код</dt>
-                        <dd class="text-gray-900 dark:text-gray-100 font-mono">{{ $messageTemplate->code }}</dd>
-                    </div>
-                    <div>
                         <dt class="text-gray-500 dark:text-gray-400">Канал</dt>
                         <dd class="text-gray-900 dark:text-gray-100">{{ strtoupper($messageTemplate->channel) }}</dd>
                     </div>
@@ -30,12 +33,8 @@
                     <div>
                         <dt class="text-gray-500 dark:text-gray-400">Для типа партнёра</dt>
                         <dd class="text-gray-900 dark:text-gray-100">
-                            @match($messageTemplate->target_partner_type)
-                                'clinic' => 'Клиника',
-                                'translator' => 'Переводчик',
-                                'curator' => 'Куратор',
-                                default => '—',
-                            @endmatch
+                            @php $typeLabels = ['clinic' => 'Клиника', 'translator' => 'Переводчик', 'curator' => 'Куратор']; @endphp
+                            {{ $typeLabels[$messageTemplate->target_partner_type] ?? '—' }}
                         </dd>
                     </div>
                     @if($messageTemplate->subject)
