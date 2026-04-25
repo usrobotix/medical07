@@ -3,8 +3,15 @@
 use App\Http\Controllers\CaseBoardController;
 use App\Http\Controllers\MedicalCaseController;
 use App\Http\Controllers\CaseStatusController;
+use App\Http\Controllers\CountryController;
+use App\Http\Controllers\CountryDirectionController;
+use App\Http\Controllers\MessageTemplateController;
+use App\Http\Controllers\NicheController;
+use App\Http\Controllers\PartnerController;
+use App\Http\Controllers\PartnerVerificationController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VerificationChecklistController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -32,6 +39,14 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('patients', PatientController::class)->only(['index', 'create', 'store']);
     Route::resource('cases', MedicalCaseController::class)->only(['index', 'create', 'store']);
+
+    Route::resource('partners', PartnerController::class)->only(['index']);
+    Route::resource('countries', CountryController::class)->only(['index']);
+    Route::resource('niches', NicheController::class)->only(['index']);
+    Route::resource('country-directions', CountryDirectionController::class)->only(['index']);
+    Route::resource('verification-checklists', VerificationChecklistController::class)->only(['index']);
+    Route::resource('message-templates', MessageTemplateController::class)->only(['index']);
+    Route::resource('partner-verifications', PartnerVerificationController::class)->only(['index']);
 });
 
 require __DIR__.'/auth.php';
