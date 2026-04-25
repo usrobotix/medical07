@@ -7,7 +7,6 @@ use App\Models\Partner;
 use App\Models\PartnerVerification;
 use App\Models\VerificationChecklist;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class PartnerVerificationController extends Controller
 {
@@ -119,10 +118,10 @@ class PartnerVerificationController extends Controller
     public function updateItems(Request $request, PartnerVerification $partnerVerification)
     {
         $data = $request->validate([
-            'items'             => 'nullable|array',
-            'items.*.id'        => 'required|exists:partner_verification_items,id',
+            'items'              => 'nullable|array',
+            'items.*.id'         => 'required|exists:partner_verification_items,id',
             'items.*.is_checked' => 'boolean',
-            'items.*.notes'     => 'nullable|string|max:1000',
+            'items.*.notes'      => 'nullable|string|max:1000',
         ]);
 
         foreach ($data['items'] ?? [] as $itemData) {
@@ -133,19 +132,6 @@ class PartnerVerificationController extends Controller
                 'checked_at' => $isChecked && !$item->checked_at ? now() : ($isChecked ? $item->checked_at : null),
                 'notes'      => $itemData['notes'] ?? null,
             ]);
-        }
-
-        // Also update overall verification fields if provided
-        $overallData = $request->validate([
-            'status'              => 'nullable|in:not_started,in_progress,passed,failed',
-            'verified_at'         => 'nullable|date',
-            'verified_by_user_id' => 'nullable|exists:users,id',
-            'notes'               => 'nullable|string',
-        ]);
-
-        $updateFields = array_filter($overallData, fn($v) => $v !== null);
-        if (!empty($updateFields)) {
-            $partnerVerification->update($updateFields);
         }
 
         return redirect()->route('kb.partner-verifications.edit', $partnerVerification)
