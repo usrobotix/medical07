@@ -1,61 +1,59 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Новый пациент</h2>
+        <h2 class="text-ys-l font-semibold text-dc leading-tight">Новый пациент</h2>
     </x-slot>
 
     <div class="py-6">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
+            <x-dc-card padding="lg" shadow="card">
                 <form method="POST" action="{{ route('patients.store') }}" class="space-y-4">
                     @csrf
 
                     <div>
-                        <x-input-label for="full_name" value="ФИО *" />
-                        <x-text-input id="full_name" name="full_name" value="{{ old('full_name') }}" class="mt-1 w-full" required autofocus />
-                        <x-input-error :messages="$errors->get('full_name')" class="mt-1" />
+                        <label for="full_name" class="block text-ys-xs font-medium text-dc-secondary mb-1">ФИО *</label>
+                        <x-dc-input id="full_name" name="full_name" value="{{ old('full_name') }}" class="w-full" required autofocus :error="$errors->first('full_name')" />
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <x-input-label for="dob" value="Дата рождения" />
-                            <x-text-input id="dob" type="date" name="dob" value="{{ old('dob') }}" class="mt-1 w-full" />
+                            <label for="dob" class="block text-ys-xs font-medium text-dc-secondary mb-1">Дата рождения</label>
+                            <x-dc-input id="dob" type="date" name="dob" value="{{ old('dob') }}" class="w-full" />
                         </div>
                         <div>
-                            <x-input-label for="phone" value="Телефон" />
-                            <x-text-input id="phone" name="phone" value="{{ old('phone') }}" class="mt-1 w-full" />
+                            <label for="phone" class="block text-ys-xs font-medium text-dc-secondary mb-1">Телефон</label>
+                            <x-dc-input id="phone" name="phone" value="{{ old('phone') }}" class="w-full" />
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <x-input-label for="email" value="Email" />
-                            <x-text-input id="email" type="email" name="email" value="{{ old('email') }}" class="mt-1 w-full" />
+                            <label for="email" class="block text-ys-xs font-medium text-dc-secondary mb-1">Email</label>
+                            <x-dc-input id="email" type="email" name="email" value="{{ old('email') }}" class="w-full" />
                         </div>
                         <div>
-                            <x-input-label for="country" value="Страна" />
-                            <x-text-input id="country" name="country" value="{{ old('country') }}" class="mt-1 w-full" />
+                            <label for="country" class="block text-ys-xs font-medium text-dc-secondary mb-1">Страна</label>
+                            <x-dc-input id="country" name="country" value="{{ old('country') }}" class="w-full" />
                         </div>
                     </div>
 
                     <div>
-                        <x-input-label for="city" value="Город" />
-                        <x-text-input id="city" name="city" value="{{ old('city') }}" class="mt-1 w-full" />
+                        <label for="city" class="block text-ys-xs font-medium text-dc-secondary mb-1">Город</label>
+                        <x-dc-input id="city" name="city" value="{{ old('city') }}" class="w-full" />
                     </div>
 
                     <div>
-                        <x-input-label for="notes" value="Заметки" />
+                        <label for="notes" class="block text-ys-xs font-medium text-dc-secondary mb-1">Заметки</label>
                         <textarea id="notes" name="notes" rows="4"
-                            class="mt-1 w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('notes') }}</textarea>
+                            class="w-full text-ys-s rounded-2xs border dc-transition bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-dc-yellow-100 p-3"
+                            style="border-color:var(--color-border);color:var(--color-text)">{{ old('notes') }}</textarea>
                     </div>
 
                     <div class="flex gap-2 pt-2">
-                        <x-primary-button>Сохранить</x-primary-button>
-                        <x-secondary-button type="button" onclick="window.location='{{ route('patients.index') }}'">
-                            Отмена
-                        </x-secondary-button>
+                        <x-dc-button type="submit" variant="action" size="m">Сохранить</x-dc-button>
+                        <x-dc-button variant="contour" size="m" href="{{ route('patients.index') }}">Отмена</x-dc-button>
                     </div>
                 </form>
-            </div>
+            </x-dc-card>
         </div>
     </div>
 </x-app-layout>

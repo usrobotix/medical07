@@ -1,12 +1,10 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Проверки партнёров
-            </h2>
+            <h2 class="text-ys-l font-semibold text-dc leading-tight">Проверки партнёров</h2>
             @auth
                 @if(auth()->user()->hasAnyRole(['admin', 'manager']))
-                    <a href="{{ route('kb.partner-verifications.create') }}" class="px-4 py-2 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition font-medium">+ Новая</a>
+                    <x-dc-button variant="action" size="s" href="{{ route('kb.partner-verifications.create') }}">+ Новая</x-dc-button>
                 @endif
             @endauth
         </div>
@@ -16,11 +14,11 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
 
             {{-- Filters --}}
-            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-4">
+            <x-dc-card padding="md" shadow="card">
                 <form method="GET" action="{{ route('kb.partner-verifications.index') }}" class="flex flex-wrap gap-3 items-end">
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Статус</label>
-                        <select name="status" class="text-sm rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-indigo-500 focus:ring-indigo-500">
+                        <label class="block text-ys-xs font-medium text-dc-secondary mb-1">Статус</label>
+                        <select name="status" class="text-ys-s h-9 px-3 rounded-2xs border dc-transition bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-dc-yellow-100" style="border-color:var(--color-border);color:var(--color-text)">
                             <option value="">Все статусы</option>
                             <option value="not_started" @selected(request('status') === 'not_started')>Не начата</option>
                             <option value="in_progress" @selected(request('status') === 'in_progress')>В процессе</option>
@@ -29,8 +27,8 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Чек-лист</label>
-                        <select name="checklist_id" class="text-sm rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-indigo-500 focus:ring-indigo-500">
+                        <label class="block text-ys-xs font-medium text-dc-secondary mb-1">Чек-лист</label>
+                        <select name="checklist_id" class="text-ys-s h-9 px-3 rounded-2xs border dc-transition bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-dc-yellow-100" style="border-color:var(--color-border);color:var(--color-text)">
                             <option value="">Все чек-листы</option>
                             @foreach($checklists as $checklist)
                                 <option value="{{ $checklist->id }}" @selected(request('checklist_id') == $checklist->id)>{{ $checklist->name }}</option>
@@ -38,8 +36,8 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Тип партнёра</label>
-                        <select name="partner_type" class="text-sm rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-indigo-500 focus:ring-indigo-500">
+                        <label class="block text-ys-xs font-medium text-dc-secondary mb-1">Тип партнёра</label>
+                        <select name="partner_type" class="text-ys-s h-9 px-3 rounded-2xs border dc-transition bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-dc-yellow-100" style="border-color:var(--color-border);color:var(--color-text)">
                             <option value="">Все типы</option>
                             <option value="clinic" @selected(request('partner_type') === 'clinic')>Клиника</option>
                             <option value="translator" @selected(request('partner_type') === 'translator')>Переводчик</option>
@@ -47,71 +45,54 @@
                         </select>
                     </div>
                     <div class="flex gap-2">
-                        <x-kb-apply-button />
-                        <x-kb-reset-link :href="route('kb.partner-verifications.index')" />
+                        <x-dc-button type="submit" variant="action" size="s">Применить</x-dc-button>
+                        <x-dc-button variant="contour" size="s" href="{{ route('kb.partner-verifications.index') }}">Сбросить</x-dc-button>
                     </div>
                 </form>
-            </div>
+            </x-dc-card>
 
             {{-- Table --}}
-            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg overflow-hidden">
+            <x-dc-card padding="none" shadow="card">
                 @if($verifications->isEmpty())
-                    <div class="p-8 text-center text-gray-500 dark:text-gray-400">
+                    <div class="p-8 text-center text-dc-secondary text-ys-s">
                         Проверки не найдены.
                     </div>
                 @else
-                    <table class="w-full text-sm text-left">
-                        <thead class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 uppercase text-xs">
-                            <tr>
-                                <th class="px-4 py-3">Партнёр</th>
-                                <th class="px-4 py-3">Чек-лист</th>
-                                <th class="px-4 py-3">Статус</th>
-                                <th class="px-4 py-3">Проверен</th>
-                                <th class="px-4 py-3"></th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                            @foreach($verifications as $verification)
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                    <td class="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">{{ $verification->partner?->name ?? '—' }}</td>
-                                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $verification->checklist?->name ?? '—' }}</td>
-                                    <td class="px-4 py-3">
-                                        @php
-                                            $vColors = [
-                                                'not_started' => 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300',
-                                                'in_progress' => 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200',
-                                                'passed'      => 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200',
-                                                'failed'      => 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200',
-                                            ];
-                                            $vLabels = ['not_started' => 'Не начата', 'in_progress' => 'В процессе', 'passed' => 'Пройдена', 'failed' => 'Провалена'];
-                                        @endphp
-                                        <span class="px-2 py-0.5 rounded-full text-xs font-medium {{ $vColors[$verification->status] ?? '' }}">
-                                            {{ $vLabels[$verification->status] ?? $verification->status }}
-                                        </span>
-                                    </td>
-                                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                                        {{ $verification->verified_at?->format('d.m.Y') ?? '—' }}
-                                    </td>
-                                    <td class="px-4 py-3 text-right">
-                                        <a href="{{ route('kb.partner-verifications.show', $verification) }}" class="text-indigo-600 dark:text-indigo-400 hover:underline text-xs">Просмотр</a>
-                                        @auth
-                                            @if(auth()->user()->hasAnyRole(['admin', 'manager']))
-                                                &nbsp;
-                                                <a href="{{ route('kb.partner-verifications.edit', $verification) }}" class="text-gray-500 dark:text-gray-400 hover:underline text-xs">Выполнить</a>
-                                            @endif
-                                        @endauth
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                    <x-dc-table :headers="['Партнёр', 'Чек-лист', 'Статус', 'Проверен', '']">
+                        @foreach($verifications as $verification)
+                            <x-dc-table-row>
+                                <x-dc-table-cell class="font-medium text-dc">{{ $verification->partner?->name ?? '—' }}</x-dc-table-cell>
+                                <x-dc-table-cell class="text-dc-secondary">{{ $verification->checklist?->name ?? '—' }}</x-dc-table-cell>
+                                <x-dc-table-cell>
+                                    @php
+                                        $vColors = ['not_started' => 'gray', 'in_progress' => 'info', 'passed' => 'success', 'failed' => 'error'];
+                                        $vLabels = ['not_started' => 'Не начата', 'in_progress' => 'В процессе', 'passed' => 'Пройдена', 'failed' => 'Провалена'];
+                                    @endphp
+                                    <x-dc-badge :color="$vColors[$verification->status] ?? 'gray'" size="20">
+                                        {{ $vLabels[$verification->status] ?? $verification->status }}
+                                    </x-dc-badge>
+                                </x-dc-table-cell>
+                                <x-dc-table-cell class="text-dc-secondary">
+                                    {{ $verification->verified_at?->format('d.m.Y') ?? '—' }}
+                                </x-dc-table-cell>
+                                <x-dc-table-cell class="text-right space-x-2">
+                                    <a href="{{ route('kb.partner-verifications.show', $verification) }}" class="text-dc-primary text-ys-xs hover:underline">Просмотр</a>
+                                    @auth
+                                        @if(auth()->user()->hasAnyRole(['admin', 'manager']))
+                                            <a href="{{ route('kb.partner-verifications.edit', $verification) }}" class="text-dc-secondary text-ys-xs hover:underline">Выполнить</a>
+                                        @endif
+                                    @endauth
+                                </x-dc-table-cell>
+                            </x-dc-table-row>
+                        @endforeach
+                    </x-dc-table>
                     @if($verifications->hasPages())
-                        <div class="px-4 py-3 border-t border-gray-100 dark:border-gray-700">
+                        <div class="px-4 py-3" style="border-top:1px solid var(--color-border)">
                             {{ $verifications->links() }}
                         </div>
                     @endif
                 @endif
-            </div>
+            </x-dc-card>
         </div>
     </div>
 </x-app-layout>

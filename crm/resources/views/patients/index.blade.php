@@ -1,50 +1,36 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Пациенты</h2>
-            <a href="{{ route('patients.create') }}"
-               class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white transition ease-in-out duration-150">
-                + Пациент
-            </a>
+            <h2 class="text-ys-l font-semibold text-dc leading-tight">Пациенты</h2>
+            <x-dc-button variant="action" size="s" href="{{ route('patients.create') }}">+ Пациент</x-dc-button>
         </div>
     </x-slot>
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-4">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="text-left border-b border-gray-200 dark:border-gray-700">
-                            <th class="py-2 text-gray-600 dark:text-gray-400 font-semibold">ID</th>
-                            <th class="py-2 text-gray-600 dark:text-gray-400 font-semibold">ФИО</th>
-                            <th class="py-2 text-gray-600 dark:text-gray-400 font-semibold">Email</th>
-                            <th class="py-2 text-gray-600 dark:text-gray-400 font-semibold">Телефон</th>
-                            <th class="py-2 text-gray-600 dark:text-gray-400 font-semibold">Город</th>
+            <x-dc-card padding="none" shadow="card">
+                <x-dc-table :headers="['ID', 'ФИО', 'Email', 'Телефон', 'Город']">
+                    @forelse($patients as $p)
+                        <x-dc-table-row>
+                            <x-dc-table-cell class="text-dc-secondary">{{ $p->id }}</x-dc-table-cell>
+                            <x-dc-table-cell class="font-medium text-dc">{{ $p->full_name }}</x-dc-table-cell>
+                            <x-dc-table-cell class="text-dc-secondary">{{ $p->email }}</x-dc-table-cell>
+                            <x-dc-table-cell class="text-dc-secondary">{{ $p->phone }}</x-dc-table-cell>
+                            <x-dc-table-cell class="text-dc-secondary">{{ $p->city }}</x-dc-table-cell>
+                        </x-dc-table-row>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="py-10 text-center text-dc-secondary italic text-ys-s">
+                                Нет пациентов
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($patients as $p)
-                            <tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
-                                <td class="py-2 text-gray-800 dark:text-gray-200">{{ $p->id }}</td>
-                                <td class="py-2 text-gray-800 dark:text-gray-200">{{ $p->full_name }}</td>
-                                <td class="py-2 text-gray-600 dark:text-gray-400">{{ $p->email }}</td>
-                                <td class="py-2 text-gray-600 dark:text-gray-400">{{ $p->phone }}</td>
-                                <td class="py-2 text-gray-600 dark:text-gray-400">{{ $p->city }}</td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="py-8 text-center text-gray-400 dark:text-gray-500 italic">
-                                    Нет пациентов
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                    @endforelse
+                </x-dc-table>
 
-                <div class="mt-4">
+                <div class="px-4 py-3" style="border-top:1px solid var(--color-border)">
                     {{ $patients->links() }}
                 </div>
-            </div>
+            </x-dc-card>
         </div>
     </div>
 </x-app-layout>
