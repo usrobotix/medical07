@@ -5,6 +5,13 @@ use App\Http\Controllers\MedicalCaseController;
 use App\Http\Controllers\CaseStatusController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Kb\PartnerController as KbPartnerController;
+use App\Http\Controllers\Kb\CountryController as KbCountryController;
+use App\Http\Controllers\Kb\NicheController as KbNicheController;
+use App\Http\Controllers\Kb\CountryDirectionController as KbCountryDirectionController;
+use App\Http\Controllers\Kb\VerificationChecklistController as KbVerificationChecklistController;
+use App\Http\Controllers\Kb\MessageTemplateController as KbMessageTemplateController;
+use App\Http\Controllers\Kb\PartnerVerificationController as KbPartnerVerificationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -32,6 +39,17 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('patients', PatientController::class)->only(['index', 'create', 'store']);
     Route::resource('cases', MedicalCaseController::class)->only(['index', 'create', 'store']);
+
+    // Knowledge Base (KB) read-only routes
+    Route::prefix('kb')->name('kb.')->group(function () {
+        Route::resource('partners', KbPartnerController::class)->only(['index', 'show']);
+        Route::resource('countries', KbCountryController::class)->only(['index', 'show']);
+        Route::resource('niches', KbNicheController::class)->only(['index', 'show']);
+        Route::resource('country-directions', KbCountryDirectionController::class)->only(['index', 'show']);
+        Route::resource('verification-checklists', KbVerificationChecklistController::class)->only(['index', 'show']);
+        Route::resource('message-templates', KbMessageTemplateController::class)->only(['index', 'show']);
+        Route::resource('partner-verifications', KbPartnerVerificationController::class)->only(['index', 'show']);
+    });
 });
 
 require __DIR__.'/auth.php';
