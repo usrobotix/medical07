@@ -1,12 +1,10 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Страны
-            </h2>
+            <h2 class="text-ys-l font-semibold text-dc leading-tight">Страны</h2>
             @auth
                 @if(auth()->user()->hasAnyRole(['admin', 'manager']))
-                    <a href="{{ route('kb.countries.create') }}" class="px-4 py-2 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition font-medium">+ Добавить</a>
+                    <x-dc-button variant="action" size="s" href="{{ route('kb.countries.create') }}">+ Добавить</x-dc-button>
                 @endif
             @endauth
         </div>
@@ -16,61 +14,50 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
 
             {{-- Filters --}}
-            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-4">
+            <x-dc-card padding="md" shadow="card">
                 <form method="GET" action="{{ route('kb.countries.index') }}" class="flex flex-wrap gap-3 items-end">
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Поиск по названию</label>
+                        <label class="block text-ys-xs font-medium text-dc-secondary mb-1">Поиск по названию</label>
                         <input type="text" name="name" value="{{ request('name') }}"
-                            class="text-sm rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:border-indigo-500 focus:ring-indigo-500"
+                            class="text-ys-s h-9 px-3 rounded-2xs border dc-transition bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-dc-yellow-100"
+                            style="border-color:var(--color-border);color:var(--color-text)"
                             placeholder="Название или ISO...">
                     </div>
                     <div class="flex gap-2">
-                        <x-kb-apply-button />
-                        <x-kb-reset-link :href="route('kb.countries.index')" />
+                        <x-dc-button type="submit" variant="action" size="s">Применить</x-dc-button>
+                        <x-dc-button variant="contour" size="s" href="{{ route('kb.countries.index') }}">Сбросить</x-dc-button>
                     </div>
                 </form>
-            </div>
+            </x-dc-card>
 
             {{-- Table --}}
-            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg overflow-hidden">
+            <x-dc-card padding="none" shadow="card">
                 @if($countries->isEmpty())
-                    <div class="p-8 text-center text-gray-500 dark:text-gray-400">
+                    <div class="p-8 text-center text-dc-secondary text-ys-s">
                         Страны не найдены.
                     </div>
                 @else
-                    <table class="w-full text-sm text-left">
-                        <thead class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 uppercase text-xs">
-                            <tr>
-                                <th class="px-4 py-3">ISO</th>
-                                <th class="px-4 py-3">Название (RU)</th>
-                                <th class="px-4 py-3">Название (EN)</th>
-                                <th class="px-4 py-3">Направлений</th>
-                                <th class="px-4 py-3">Партнёров</th>
-                                <th class="px-4 py-3"></th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                            @foreach($countries as $country)
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                    <td class="px-4 py-3 font-mono text-gray-700 dark:text-gray-300">{{ $country->iso2 }}</td>
-                                    <td class="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">{{ $country->name_ru }}</td>
-                                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $country->name_en }}</td>
-                                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $country->directions_count }}</td>
-                                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $country->partners_count }}</td>
-                                    <td class="px-4 py-3 text-right">
-                                        <a href="{{ route('kb.countries.show', $country) }}" class="text-indigo-600 dark:text-indigo-400 hover:underline text-xs">Подробнее</a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                    <x-dc-table :headers="['ISO', 'Название (RU)', 'Название (EN)', 'Направлений', 'Партнёров', '']">
+                        @foreach($countries as $country)
+                            <x-dc-table-row href="{{ route('kb.countries.show', $country) }}">
+                                <x-dc-table-cell class="font-mono text-dc-secondary">{{ $country->iso2 }}</x-dc-table-cell>
+                                <x-dc-table-cell class="font-medium text-dc">{{ $country->name_ru }}</x-dc-table-cell>
+                                <x-dc-table-cell class="text-dc-secondary">{{ $country->name_en }}</x-dc-table-cell>
+                                <x-dc-table-cell class="text-dc-secondary">{{ $country->directions_count }}</x-dc-table-cell>
+                                <x-dc-table-cell class="text-dc-secondary">{{ $country->partners_count }}</x-dc-table-cell>
+                                <x-dc-table-cell class="text-right">
+                                    <span class="text-dc-primary text-ys-xs hover:underline">Подробнее</span>
+                                </x-dc-table-cell>
+                            </x-dc-table-row>
+                        @endforeach
+                    </x-dc-table>
                     @if($countries->hasPages())
-                        <div class="px-4 py-3 border-t border-gray-100 dark:border-gray-700">
+                        <div class="px-4 py-3" style="border-top:1px solid var(--color-border)">
                             {{ $countries->links() }}
                         </div>
                     @endif
                 @endif
-            </div>
+            </x-dc-card>
         </div>
     </div>
 </x-app-layout>
