@@ -5,7 +5,7 @@
 
     <div class="py-6">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <x-dc-card padding="lg" shadow="card">
+            <x-dc.card padding="lg" shadow="card">
                 <form method="POST" action="{{ route('cases.store') }}" class="space-y-4">
                     @csrf
 
@@ -44,7 +44,7 @@
 
                     <div>
                         <label for="title" class="block text-ys-xs font-medium text-dc-secondary mb-1">Заголовок</label>
-                        <x-dc-input id="title" name="title" value="{{ old('title') }}" class="w-full" />
+                        <x-dc.input id="title" name="title" value="{{ old('title') }}" class="w-full" />
                     </div>
 
                     <div>
@@ -56,15 +56,15 @@
 
                     <div>
                         <label for="priority" class="block text-ys-xs font-medium text-dc-secondary mb-1">Приоритет (1..5) *</label>
-                        <x-dc-input id="priority" type="number" name="priority" value="{{ old('priority', 3) }}" min="1" max="5" class="w-full" required :error="$errors->first('priority')" />
+                        <x-dc.input id="priority" type="number" name="priority" value="{{ old('priority', 3) }}" min="1" max="5" class="w-full" required :error="$errors->first('priority')" />
                     </div>
 
                     <div class="flex gap-2 pt-2">
-                        <x-dc-button type="submit" variant="action" size="m">Сохранить</x-dc-button>
-                        <x-dc-button variant="contour" size="m" href="{{ route('cases.index') }}">Отмена</x-dc-button>
+                        <x-dc.button type="submit" variant="action" size="m">Сохранить</x-dc.button>
+                        <x-dc.button variant="contour" size="m" href="{{ route('cases.index') }}">Отмена</x-dc.button>
                     </div>
                 </form>
-            </x-dc-card>
+            </x-dc.card>
         </div>
     </div>
 </x-app-layout>

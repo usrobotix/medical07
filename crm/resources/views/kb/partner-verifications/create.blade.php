@@ -10,7 +10,7 @@
         <div class="max-w-xl mx-auto sm:px-6 lg:px-8">
             <form method="POST" action="{{ route('kb.partner-verifications.store') }}">
                 @csrf
-                <x-dc-card padding="lg" shadow="card">
+                <x-dc.card padding="lg" shadow="card">
                     <div class="space-y-4">
                         <p class="text-ys-s text-dc-secondary">Выберите партнёра и чек-лист. Пункты проверки будут автоматически созданы из чек-листа.</p>
                         <div>
@@ -37,11 +37,11 @@
                             @error('checklist_id')<p class="text-dc-red-100 text-ys-xs mt-1">{{ $message }}</p>@enderror
                         </div>
                         <div class="flex justify-end gap-3 pt-2">
-                            <x-dc-button variant="contour" size="s" href="{{ route('kb.partner-verifications.index') }}">Отмена</x-dc-button>
-                            <x-dc-button type="submit" variant="action" size="s">Начать верификацию</x-dc-button>
+                            <x-dc.button variant="contour" size="s" href="{{ route('kb.partner-verifications.index') }}">Отмена</x-dc.button>
+                            <x-dc.button type="submit" variant="action" size="s">Начать верификацию</x-dc.button>
                         </div>
                     </div>
-                </x-dc-card>
+                </x-dc.card>
             </form>
         </div>
     </div>

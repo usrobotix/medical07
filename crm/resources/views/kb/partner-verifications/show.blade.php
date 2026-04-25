@@ -7,7 +7,7 @@
             </div>
             @auth
                 @if(auth()->user()->hasAnyRole(['admin', 'manager']))
-                    <x-dc-button variant="action" size="s" href="{{ route('kb.partner-verifications.edit', $partnerVerification) }}">Выполнить проверку</x-dc-button>
+                    <x-dc.button variant="action" size="s" href="{{ route('kb.partner-verifications.edit', $partnerVerification) }}">Выполнить проверку</x-dc.button>
                 @endif
             @endauth
         </div>
@@ -16,7 +16,7 @@
     <div class="py-8">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <x-dc-card padding="lg" shadow="card">
+            <x-dc.card padding="lg" shadow="card">
                 <h3 class="text-ys-m-s font-semibold text-dc mb-4">Информация о проверке</h3>
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
                     <div>
@@ -46,9 +46,9 @@
                                 $vColors = ['not_started' => 'gray', 'in_progress' => 'info', 'passed' => 'success', 'failed' => 'error'];
                                 $vLabels = ['not_started' => 'Не начата', 'in_progress' => 'В процессе', 'passed' => 'Пройдена', 'failed' => 'Провалена'];
                             @endphp
-                            <x-dc-badge :color="$vColors[$partnerVerification->status] ?? 'gray'" size="20">
+                            <x-dc.badge :color="$vColors[$partnerVerification->status] ?? 'gray'" size="20">
                                 {{ $vLabels[$partnerVerification->status] ?? $partnerVerification->status }}
-                            </x-dc-badge>
+                            </x-dc.badge>
                         </dd>
                     </div>
                     <div>
@@ -66,9 +66,9 @@
                         </div>
                     @endif
                 </dl>
-            </x-dc-card>
+            </x-dc.card>
 
-            <x-dc-card padding="lg" shadow="card">
+            <x-dc.card padding="lg" shadow="card">
                 <h3 class="text-ys-s font-semibold text-dc mb-4">Пункты проверки ({{ $partnerVerification->items->count() }})</h3>
                 @if($partnerVerification->items->isEmpty())
                     <p class="text-ys-s text-dc-secondary">Пункты не добавлены.</p>
@@ -100,7 +100,7 @@
                         @endforeach
                     </ul>
                 @endif
-            </x-dc-card>
+            </x-dc.card>
 
         </div>
     </div>

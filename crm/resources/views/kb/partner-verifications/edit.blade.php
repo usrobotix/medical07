@@ -9,7 +9,7 @@
     <div class="py-8">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <x-dc-card padding="lg" shadow="card">
+            <x-dc.card padding="lg" shadow="card">
                 <h3 class="text-ys-s font-semibold text-dc mb-4">Общий статус верификации</h3>
                 <form method="POST" action="{{ route('kb.partner-verifications.update', $partnerVerification) }}" class="space-y-4">
                     @csrf
@@ -49,12 +49,12 @@
                         </div>
                     </div>
                     <div class="flex justify-end">
-                        <x-dc-button type="submit" variant="action" size="s">Сохранить статус</x-dc-button>
+                        <x-dc.button type="submit" variant="action" size="s">Сохранить статус</x-dc.button>
                     </div>
                 </form>
-            </x-dc-card>
+            </x-dc.card>
 
-            <x-dc-card padding="lg" shadow="card">
+            <x-dc.card padding="lg" shadow="card">
                 <h3 class="text-ys-s font-semibold text-dc mb-4">Пункты проверки ({{ $partnerVerification->items->count() }})</h3>
                 @if($partnerVerification->items->isEmpty())
                     <p class="text-ys-s text-dc-secondary">Пункты не найдены. Возможно, чек-лист не содержит пунктов.</p>
@@ -86,20 +86,20 @@
                             </div>
                         @endforeach
                         <div class="flex justify-end pt-2">
-                            <x-dc-button type="submit" variant="action" size="s">Сохранить пункты</x-dc-button>
+                            <x-dc.button type="submit" variant="action" size="s">Сохранить пункты</x-dc.button>
                         </div>
                     </form>
                 @endif
-            </x-dc-card>
+            </x-dc.card>
 
-            <x-dc-card padding="lg" shadow="card">
+            <x-dc.card padding="lg" shadow="card">
                 <h3 class="text-ys-xs font-semibold mb-3" style="color:var(--color-dc-red-100)">Опасная зона</h3>
                 <form method="POST" action="{{ route('kb.partner-verifications.destroy', $partnerVerification) }}" onsubmit="return confirm('Удалить верификацию?')">
                     @csrf
                     @method('DELETE')
-                    <x-dc-button type="submit" variant="danger" size="s">Удалить верификацию</x-dc-button>
+                    <x-dc.button type="submit" variant="danger" size="s">Удалить верификацию</x-dc.button>
                 </form>
-            </x-dc-card>
+            </x-dc.card>
 
         </div>
     </div>

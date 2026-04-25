@@ -7,7 +7,7 @@
             </div>
             @auth
                 @if(auth()->user()->hasAnyRole(['admin', 'manager']))
-                    <x-dc-button variant="contour" size="s" href="{{ route('kb.partners.edit', $partner) }}">Редактировать</x-dc-button>
+                    <x-dc.button variant="contour" size="s" href="{{ route('kb.partners.edit', $partner) }}">Редактировать</x-dc.button>
                 @endif
             @endauth
         </div>
@@ -17,7 +17,7 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             {{-- Main info --}}
-            <x-dc-card padding="lg" shadow="card">
+            <x-dc.card padding="lg" shadow="card">
                 <h3 class="text-ys-m-s font-semibold text-dc mb-4">Основная информация</h3>
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
                     <div>
@@ -38,9 +38,9 @@
                                 $sc = ['new' => 'info', 'verified' => 'warning', 'active' => 'success', 'frozen' => 'gray'];
                                 $sl = ['new' => 'Новый', 'verified' => 'Верифицирован', 'active' => 'Активен', 'frozen' => 'Заморожен'];
                             @endphp
-                            <x-dc-badge :color="$sc[$partner->status] ?? 'gray'" size="20">
+                            <x-dc.badge :color="$sc[$partner->status] ?? 'gray'" size="20">
                                 {{ $sl[$partner->status] ?? $partner->status }}
-                            </x-dc-badge>
+                            </x-dc.badge>
                         </dd>
                     </div>
                     <div>
@@ -64,10 +64,10 @@
                         <dd class="text-ys-s text-dc mt-0.5">{{ $partner->verification_score ?? '—' }}</dd>
                     </div>
                 </dl>
-            </x-dc-card>
+            </x-dc.card>
 
             {{-- Contacts --}}
-            <x-dc-card padding="lg" shadow="card">
+            <x-dc.card padding="lg" shadow="card">
                 <h3 class="text-ys-m-s font-semibold text-dc mb-4">Контакты</h3>
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
                     <div>
@@ -101,10 +101,10 @@
                         </dd>
                     </div>
                 </dl>
-            </x-dc-card>
+            </x-dc.card>
 
             {{-- SLA --}}
-            <x-dc-card padding="lg" shadow="card">
+            <x-dc.card padding="lg" shadow="card">
                 <h3 class="text-ys-m-s font-semibold text-dc mb-4">SLA и условия</h3>
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
                     <div>
@@ -120,11 +120,11 @@
                         <dd class="text-ys-s text-dc mt-0.5 whitespace-pre-wrap">{{ $partner->pricing_notes ?? '—' }}</dd>
                     </div>
                 </dl>
-            </x-dc-card>
+            </x-dc.card>
 
             {{-- Countries & Niches --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <x-dc-card padding="lg" shadow="card">
+                <x-dc.card padding="lg" shadow="card">
                     <h3 class="text-ys-s font-semibold text-dc mb-3">Страны работы</h3>
                     @if($partner->countries->isEmpty())
                         <p class="text-ys-s text-dc-secondary">—</p>
@@ -135,8 +135,8 @@
                             @endforeach
                         </ul>
                     @endif
-                </x-dc-card>
-                <x-dc-card padding="lg" shadow="card">
+                </x-dc.card>
+                <x-dc.card padding="lg" shadow="card">
                     <h3 class="text-ys-s font-semibold text-dc mb-3">Ниши</h3>
                     @if($partner->niches->isEmpty())
                         <p class="text-ys-s text-dc-secondary">—</p>
@@ -147,24 +147,24 @@
                             @endforeach
                         </ul>
                     @endif
-                </x-dc-card>
+                </x-dc.card>
             </div>
 
             {{-- Notes --}}
             @if($partner->notes)
-                <x-dc-card padding="lg" shadow="card">
+                <x-dc.card padding="lg" shadow="card">
                     <h3 class="text-ys-s font-semibold text-dc mb-3">Заметки</h3>
                     <p class="text-ys-s text-dc whitespace-pre-wrap">{{ $partner->notes }}</p>
-                </x-dc-card>
+                </x-dc.card>
             @endif
 
             {{-- Verifications --}}
-            <x-dc-card padding="lg" shadow="card">
+            <x-dc.card padding="lg" shadow="card">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-ys-s font-semibold text-dc">Проверки верификации</h3>
                     @auth
                         @if(auth()->user()->hasAnyRole(['admin', 'manager']))
-                            <x-dc-button variant="contour" size="xs" href="{{ route('kb.partner-verifications.create', ['partner_id' => $partner->id]) }}">+ Новая верификация</x-dc-button>
+                            <x-dc.button variant="contour" size="xs" href="{{ route('kb.partner-verifications.create', ['partner_id' => $partner->id]) }}">+ Новая верификация</x-dc.button>
                         @endif
                     @endauth
                 </div>
@@ -180,9 +180,9 @@
                                         $vColors = ['not_started' => 'gray', 'in_progress' => 'info', 'passed' => 'success', 'failed' => 'error'];
                                         $vLabels = ['not_started' => 'Не начата', 'in_progress' => 'В процессе', 'passed' => 'Пройдена', 'failed' => 'Провалена'];
                                     @endphp
-                                    <x-dc-badge :color="$vColors[$verification->status] ?? 'gray'" size="20">
+                                    <x-dc.badge :color="$vColors[$verification->status] ?? 'gray'" size="20">
                                         {{ $vLabels[$verification->status] ?? $verification->status }}
-                                    </x-dc-badge>
+                                    </x-dc.badge>
                                     <a href="{{ route('kb.partner-verifications.show', $verification) }}" class="text-dc-primary text-ys-xs hover:underline dc-transition">Открыть</a>
                                     @auth
                                         @if(auth()->user()->hasAnyRole(['admin', 'manager']))
@@ -194,7 +194,7 @@
                         @endforeach
                     </ul>
                 @endif
-            </x-dc-card>
+            </x-dc.card>
 
         </div>
     </div>

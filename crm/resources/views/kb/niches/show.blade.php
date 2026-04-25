@@ -7,7 +7,7 @@
             </div>
             @auth
                 @if(auth()->user()->hasAnyRole(['admin', 'manager']))
-                    <x-dc-button variant="contour" size="s" href="{{ route('kb.niches.edit', $niche) }}">Редактировать</x-dc-button>
+                    <x-dc.button variant="contour" size="s" href="{{ route('kb.niches.edit', $niche) }}">Редактировать</x-dc.button>
                 @endif
             @endauth
         </div>
@@ -16,7 +16,7 @@
     <div class="py-8">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <x-dc-card padding="lg" shadow="card">
+            <x-dc.card padding="lg" shadow="card">
                 <h3 class="text-ys-m-s font-semibold text-dc mb-4">Информация о нише</h3>
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
                     <div>
@@ -32,9 +32,9 @@
                         <dd class="text-ys-s text-dc mt-0.5">{{ $niche->description ?? '—' }}</dd>
                     </div>
                 </dl>
-            </x-dc-card>
+            </x-dc.card>
 
-            <x-dc-card padding="lg" shadow="card">
+            <x-dc.card padding="lg" shadow="card">
                 <h3 class="text-ys-s font-semibold text-dc mb-3">Партнёры ({{ $niche->partners->count() }})</h3>
                 @if($niche->partners->isEmpty())
                     <p class="text-ys-s text-dc-secondary">Партнёры не добавлены.</p>
@@ -53,9 +53,9 @@
                         @endforeach
                     </ul>
                 @endif
-            </x-dc-card>
+            </x-dc.card>
 
-            <x-dc-card padding="lg" shadow="card">
+            <x-dc.card padding="lg" shadow="card">
                 <h3 class="text-ys-s font-semibold text-dc mb-3">Направления по странам ({{ $niche->countryDirections->count() }})</h3>
                 @if($niche->countryDirections->isEmpty())
                     <p class="text-ys-s text-dc-secondary">Направления не добавлены.</p>
@@ -74,7 +74,7 @@
                         @endforeach
                     </ul>
                 @endif
-            </x-dc-card>
+            </x-dc.card>
 
         </div>
     </div>

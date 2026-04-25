@@ -12,7 +12,7 @@
             <form method="POST" action="{{ route('kb.verification-checklists.update', $verificationChecklist) }}">
                 @csrf
                 @method('PATCH')
-                <x-dc-card padding="lg" shadow="card">
+                <x-dc.card padding="lg" shadow="card">
                     <h3 class="text-ys-s font-semibold text-dc mb-4">Основные параметры</h3>
                     <div class="space-y-4">
                         <div>
@@ -40,15 +40,15 @@
                             <form method="POST" action="{{ route('kb.verification-checklists.destroy', $verificationChecklist) }}" onsubmit="return confirm('Удалить чек-лист? Все пункты будут удалены.')">
                                 @csrf
                                 @method('DELETE')
-                                <x-dc-button type="submit" variant="danger" size="s">Удалить чек-лист</x-dc-button>
+                                <x-dc.button type="submit" variant="danger" size="s">Удалить чек-лист</x-dc.button>
                             </form>
-                            <x-dc-button type="submit" variant="action" size="s">Сохранить</x-dc-button>
+                            <x-dc.button type="submit" variant="action" size="s">Сохранить</x-dc.button>
                         </div>
                     </div>
-                </x-dc-card>
+                </x-dc.card>
             </form>
 
-            <x-dc-card padding="lg" shadow="card">
+            <x-dc.card padding="lg" shadow="card">
                 <h3 class="text-ys-s font-semibold text-dc mb-4">Пункты чек-листа ({{ $verificationChecklist->items->count() }})</h3>
 
                 @if($verificationChecklist->items->isNotEmpty())
@@ -63,7 +63,7 @@
                                         @csrf
                                         @method('PATCH')
                                         <input type="text" name="text" value="{{ $item->text }}" required class="block w-full h-9 px-4 text-ys-s rounded-2xs border border-dc-gray-30 bg-surface text-dc dc-transition focus:outline-none focus-visible:ring-2 focus-visible:ring-dc-yellow-100 flex-1">
-                                        <x-dc-button type="submit" variant="normal" size="xs">Обновить</x-dc-button>
+                                        <x-dc.button type="submit" variant="normal" size="xs">Обновить</x-dc.button>
                                     </form>
                                 </div>
                                 <form method="POST" action="{{ route('kb.verification-checklists.items.destroy', [$verificationChecklist, $item]) }}" onsubmit="return confirm('Удалить пункт?')">
@@ -81,9 +81,9 @@
                 <form method="POST" action="{{ route('kb.verification-checklists.items.store', $verificationChecklist) }}" class="flex gap-2 items-center border-t pt-4" style="border-color:var(--color-border)">
                     @csrf
                     <input type="text" name="text" placeholder="Текст нового пункта..." required class="block w-full h-9 px-4 text-ys-s rounded-2xs border border-dc-gray-30 bg-surface text-dc dc-transition focus:outline-none focus-visible:ring-2 focus-visible:ring-dc-yellow-100 flex-1">
-                    <x-dc-button type="submit" variant="action" size="s">+ Добавить</x-dc-button>
+                    <x-dc.button type="submit" variant="action" size="s">+ Добавить</x-dc.button>
                 </form>
-            </x-dc-card>
+            </x-dc.card>
 
         </div>
     </div>

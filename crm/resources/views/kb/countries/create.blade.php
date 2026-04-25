@@ -10,7 +10,7 @@
         <div class="max-w-xl mx-auto sm:px-6 lg:px-8">
             <form method="POST" action="{{ route('kb.countries.store') }}">
                 @csrf
-                <x-dc-card padding="lg" shadow="card">
+                <x-dc.card padding="lg" shadow="card">
                     <div class="space-y-4">
                         <div>
                             <label class="block text-ys-xs font-medium text-dc-secondary mb-1">ISO2 код <span class="text-dc-red-100">*</span></label>
@@ -32,11 +32,11 @@
                             <input type="number" name="sort_order" value="{{ old('sort_order', 0) }}" class="block w-full h-9 px-4 text-ys-s rounded-2xs border border-dc-gray-30 bg-surface text-dc dc-transition focus:outline-none focus-visible:ring-2 focus-visible:ring-dc-yellow-100">
                         </div>
                         <div class="flex justify-end gap-3 pt-2">
-                            <x-dc-button variant="contour" size="s" href="{{ route('kb.countries.index') }}">Отмена</x-dc-button>
-                            <x-dc-button type="submit" variant="action" size="s">Сохранить</x-dc-button>
+                            <x-dc.button variant="contour" size="s" href="{{ route('kb.countries.index') }}">Отмена</x-dc.button>
+                            <x-dc.button type="submit" variant="action" size="s">Сохранить</x-dc.button>
                         </div>
                     </div>
-                </x-dc-card>
+                </x-dc.card>
             </form>
         </div>
     </div>
