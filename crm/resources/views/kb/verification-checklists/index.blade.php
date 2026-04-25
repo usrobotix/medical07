@@ -1,8 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            Чек-листы верификации
-        </h2>
+        <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                Чек-листы верификации
+            </h2>
+            @auth
+                @if(auth()->user()->hasAnyRole(['admin', 'manager']))
+                    <a href="{{ route('kb.verification-checklists.create') }}" class="px-4 py-2 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition font-medium">+ Добавить</a>
+                @endif
+            @endauth
+        </div>
     </x-slot>
 
     <div class="py-8">
@@ -37,7 +44,6 @@
                     <table class="w-full text-sm text-left">
                         <thead class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 uppercase text-xs">
                             <tr>
-                                <th class="px-4 py-3">Код</th>
                                 <th class="px-4 py-3">Название</th>
                                 <th class="px-4 py-3">Тип партнёра</th>
                                 <th class="px-4 py-3">Пунктов</th>
@@ -47,15 +53,10 @@
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                             @foreach($checklists as $checklist)
                                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-750">
-                                    <td class="px-4 py-3 font-mono text-gray-700 dark:text-gray-300 text-xs">{{ $checklist->code }}</td>
                                     <td class="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">{{ $checklist->name }}</td>
                                     <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
-                                        @match($checklist->partner_type)
-                                            'clinic' => 'Клиника',
-                                            'translator' => 'Переводчик',
-                                            'curator' => 'Куратор',
-                                            default => $checklist->partner_type ?? '—',
-                                        @endmatch
+                                        @php $tl = ['clinic' => 'Клиника', 'translator' => 'Переводчик', 'curator' => 'Куратор']; @endphp
+                                        {{ $tl[$checklist->partner_type] ?? ($checklist->partner_type ?? '—') }}
                                     </td>
                                     <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $checklist->items_count }}</td>
                                     <td class="px-4 py-3 text-right">

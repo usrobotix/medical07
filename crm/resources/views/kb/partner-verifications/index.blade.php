@@ -1,8 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            Проверки партнёров
-        </h2>
+        <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                Проверки партнёров
+            </h2>
+            @auth
+                @if(auth()->user()->hasAnyRole(['admin', 'manager']))
+                    <a href="{{ route('kb.partner-verifications.create') }}" class="px-4 py-2 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition font-medium">+ Новая</a>
+                @endif
+            @endauth
+        </div>
     </x-slot>
 
     <div class="py-8">
@@ -86,7 +93,13 @@
                                         {{ $verification->verified_at?->format('d.m.Y') ?? '—' }}
                                     </td>
                                     <td class="px-4 py-3 text-right">
-                                        <a href="{{ route('kb.partner-verifications.show', $verification) }}" class="text-indigo-600 dark:text-indigo-400 hover:underline text-xs">Подробнее</a>
+                                        <a href="{{ route('kb.partner-verifications.show', $verification) }}" class="text-indigo-600 dark:text-indigo-400 hover:underline text-xs">Просмотр</a>
+                                        @auth
+                                            @if(auth()->user()->hasAnyRole(['admin', 'manager']))
+                                                &nbsp;
+                                                <a href="{{ route('kb.partner-verifications.edit', $verification) }}" class="text-gray-500 dark:text-gray-400 hover:underline text-xs">Выполнить</a>
+                                            @endif
+                                        @endauth
                                     </td>
                                 </tr>
                             @endforeach
