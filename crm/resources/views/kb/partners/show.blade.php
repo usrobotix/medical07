@@ -196,6 +196,117 @@
                 @endif
             </x-dc.card>
 
+            {{-- Research Profile --}}
+            @if($partner->researchProfile)
+                @php $rp = $partner->researchProfile; @endphp
+                <x-dc.card padding="lg" shadow="card">
+                    <h3 class="text-ys-m-s font-semibold text-dc mb-4">Исследовательские данные</h3>
+                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
+                        @if($partner->address)
+                            <div class="sm:col-span-2">
+                                <dt class="text-ys-xs text-dc-secondary">Адрес</dt>
+                                <dd class="text-ys-s text-dc mt-0.5">{{ $partner->address }}</dd>
+                            </div>
+                        @endif
+                        @if($partner->international_page_url)
+                            <div class="sm:col-span-2">
+                                <dt class="text-ys-xs text-dc-secondary">Страница для иностранных пациентов</dt>
+                                <dd class="text-ys-s mt-0.5">
+                                    <a href="{{ $partner->international_page_url }}" target="_blank" class="text-dc-primary hover:underline dc-transition break-all">{{ $partner->international_page_url }}</a>
+                                </dd>
+                            </div>
+                        @endif
+                        @if(!empty($rp->accepts_foreigners['status']))
+                            <div>
+                                <dt class="text-ys-xs text-dc-secondary">Приём иностранцев</dt>
+                                <dd class="text-ys-s text-dc mt-0.5">
+                                    {{ $rp->accepts_foreigners['status'] }}
+                                    @if(!empty($rp->accepts_foreigners['source_url']))
+                                        — <a href="{{ $rp->accepts_foreigners['source_url'] }}" target="_blank" class="text-dc-primary hover:underline dc-transition">источник</a>
+                                    @endif
+                                    @if(!empty($rp->accepts_foreigners['note']))
+                                        <span class="text-dc-secondary text-ys-xs block">{{ $rp->accepts_foreigners['note'] }}</span>
+                                    @endif
+                                </dd>
+                            </div>
+                        @endif
+                        @if(!empty($rp->accepts_russians['status']))
+                            <div>
+                                <dt class="text-ys-xs text-dc-secondary">Приём пациентов из РФ</dt>
+                                <dd class="text-ys-s text-dc mt-0.5">
+                                    {{ $rp->accepts_russians['status'] }}
+                                    @if(!empty($rp->accepts_russians['source_url']))
+                                        — <a href="{{ $rp->accepts_russians['source_url'] }}" target="_blank" class="text-dc-primary hover:underline dc-transition">источник</a>
+                                    @endif
+                                    @if(!empty($rp->accepts_russians['note']))
+                                        <span class="text-dc-secondary text-ys-xs block">{{ $rp->accepts_russians['note'] }}</span>
+                                    @endif
+                                </dd>
+                            </div>
+                        @endif
+                        @if(!empty($rp->working_hours['clinic']) || !empty($rp->working_hours['international_dept']))
+                            <div class="sm:col-span-2">
+                                <dt class="text-ys-xs text-dc-secondary">Режим работы</dt>
+                                <dd class="text-ys-s text-dc mt-0.5 space-y-0.5">
+                                    @if(!empty($rp->working_hours['clinic']))
+                                        <div>Клиника: {{ $rp->working_hours['clinic'] }}</div>
+                                    @endif
+                                    @if(!empty($rp->working_hours['international_dept']))
+                                        <div>Международный отдел: {{ $rp->working_hours['international_dept'] }}</div>
+                                    @endif
+                                </dd>
+                            </div>
+                        @endif
+                        @if(!empty($rp->key_services) && count($rp->key_services) > 0)
+                            <div class="sm:col-span-2">
+                                <dt class="text-ys-xs text-dc-secondary">Ключевые услуги</dt>
+                                <dd class="mt-0.5">
+                                    <ul class="text-ys-s text-dc list-disc list-inside space-y-0.5">
+                                        @foreach($rp->key_services as $service)
+                                            <li>{{ $service }}</li>
+                                        @endforeach
+                                    </ul>
+                                </dd>
+                            </div>
+                        @endif
+                        @if($partner->last_checked_date)
+                            <div>
+                                <dt class="text-ys-xs text-dc-secondary">Последняя проверка</dt>
+                                <dd class="text-ys-s text-dc mt-0.5">{{ $partner->last_checked_date->format('d.m.Y') }}</dd>
+                            </div>
+                        @endif
+                        @if(!empty($rp->sources) && count($rp->sources) > 0)
+                            <div class="sm:col-span-2">
+                                <dt class="text-ys-xs text-dc-secondary mb-1">Источники</dt>
+                                <dd>
+                                    <ul class="text-ys-s space-y-1">
+                                        @foreach($rp->sources as $source)
+                                            <li>
+                                                @if(!empty($source['url']))
+                                                    <a href="{{ $source['url'] }}" target="_blank" class="text-dc-primary hover:underline dc-transition break-all">{{ $source['url'] }}</a>
+                                                @endif
+                                                @if(!empty($source['description']))
+                                                    <span class="text-dc-secondary"> — {{ $source['description'] }}</span>
+                                                @endif
+                                                @if(!empty($source['checked_at']))
+                                                    <span class="text-dc-secondary text-ys-xs"> ({{ $source['checked_at'] }})</span>
+                                                @endif
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </dd>
+                            </div>
+                        @endif
+                    </dl>
+                    @if($rp->review_md)
+                        <div class="mt-4 pt-4" style="border-top: 1px solid var(--color-border)">
+                            <h4 class="text-ys-xs text-dc-secondary mb-2">Обзор</h4>
+                            <pre class="text-ys-s text-dc whitespace-pre-wrap font-sans">{{ $rp->review_md }}</pre>
+                        </div>
+                    @endif
+                </x-dc.card>
+            @endif
+
         </div>
     </div>
 </x-app-layout>

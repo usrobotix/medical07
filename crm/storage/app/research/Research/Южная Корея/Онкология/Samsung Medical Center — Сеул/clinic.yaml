@@ -1,0 +1,32 @@
+название: Samsung Medical Center
+город: Сеул
+страна: Южная Корея
+направление: Онкология
+адрес: "81 Irwon-ro, Gangnam-gu, Seoul 06351, South Korea"
+контакты:
+  сайт: https://www.samsunghospital.com
+  страница_для_иностранных_пациентов: https://www.samsunghospital.com/global/en
+  email: int_onco@samsunghospital.com
+  телефон: "+82 2 3410 2114"
+ключевые_услуги:
+  - Онкология
+  - Хирургия рака
+  - Таргетная терапия
+  - Роботизированная хирургия Da Vinci
+приём_иностранцев:
+  статус: "да"
+  источник_url: https://www.samsunghospital.com/global/en
+  примечание: Развитый международный центр
+приём_пациентов_из_РФ:
+  статус: "да"
+  источник_url: https://www.samsunghospital.com/global/en
+  примечание: Русскоязычные координаторы
+режим_работы:
+  клиника: Пн-Пт 08:30-17:30
+  отдел_международных_пациентов: Пн-Пт 08:30-17:30
+  источник_url: https://www.samsunghospital.com/global/en
+источники:
+  - url: https://www.samsunghospital.com/global/en
+    описание: Международный портал Samsung Medical Center
+    дата_проверки: 2025-02-15
+дата_последней_проверки: 2025-02-15

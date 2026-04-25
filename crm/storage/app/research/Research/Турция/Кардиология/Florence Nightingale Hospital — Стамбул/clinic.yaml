@@ -1,0 +1,31 @@
+название: Florence Nightingale Hospital
+город: Стамбул
+страна: Турция
+направление: Кардиология
+адрес: "Abide-i Hürriyet Caddesi No:290, 34381 Şişli/İstanbul, Turkey"
+контакты:
+  сайт: https://www.florencenightingale.com.tr
+  страница_для_иностранных_пациентов: https://www.florencenightingale.com.tr/en
+  email: international@florencenightingale.com.tr
+  телефон: "+90 212 375 50 00"
+ключевые_услуги:
+  - Кардиохирургия
+  - Интервенционная кардиология
+  - Аритмология
+приём_иностранцев:
+  статус: "да"
+  источник_url: https://www.florencenightingale.com.tr/en
+  примечание: не указано
+приём_пациентов_из_РФ:
+  статус: "да"
+  источник_url: https://www.florencenightingale.com.tr/en
+  примечание: не указано
+режим_работы:
+  клиника: Круглосуточно
+  отдел_международных_пациентов: Пн-Пт 09:00-18:00
+  источник_url: https://www.florencenightingale.com.tr/en
+источники:
+  - url: https://www.florencenightingale.com.tr/en
+    описание: Официальный сайт
+    дата_проверки: 2025-01-25
+дата_последней_проверки: 2025-01-25

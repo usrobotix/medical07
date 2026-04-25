@@ -1,0 +1,31 @@
+название: Charité Universitätsmedizin Berlin
+город: Берлин
+страна: Германия
+направление: Нейрохирургия
+адрес: "Charitéplatz 1, 10117 Berlin, Germany"
+контакты:
+  сайт: https://www.charite.de
+  страница_для_иностранных_пациентов: https://www.charite.de/en/international-patients
+  email: international@charite.de
+  телефон: "+49 30 450-50"
+ключевые_услуги:
+  - Нейрохирургия головного мозга
+  - Хирургия позвоночника
+  - Стереотаксическая радиохирургия
+приём_иностранцев:
+  статус: "да"
+  источник_url: https://www.charite.de/en/international-patients
+  примечание: Международный отдел работает на нескольких языках
+приём_пациентов_из_РФ:
+  статус: "да"
+  источник_url: https://www.charite.de/en/international-patients
+  примечание: Русскоязычные специалисты
+режим_работы:
+  клиника: Круглосуточно
+  отдел_международных_пациентов: Пн-Пт 09:00-17:00
+  источник_url: https://www.charite.de/en/international-patients
+источники:
+  - url: https://www.charite.de/en/international-patients
+    описание: Официальная страница для иностранных пациентов
+    дата_проверки: 2025-01-10
+дата_последней_проверки: 2025-01-10

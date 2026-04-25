@@ -1,0 +1,31 @@
+название: "Hospital Sant Joan de Déu"
+город: Барселона
+страна: Испания
+направление: Редкие диагнозы
+адрес: "Pg. Sant Joan de Déu 2, 08950 Esplugues de Llobregat, Spain"
+контакты:
+  сайт: https://www.sjdhospitalbarcelona.org
+  страница_для_иностранных_пациентов: https://www.sjdhospitalbarcelona.org/en/international-patients
+  email: international@sjdhospitalbarcelona.org
+  телефон: "+34 93 253 21 00"
+ключевые_услуги:
+  - Редкие педиатрические болезни
+  - Нейрологические редкие болезни
+  - Генетические синдромы
+приём_иностранцев:
+  статус: "да"
+  источник_url: https://www.sjdhospitalbarcelona.org/en/international-patients
+  примечание: Специализируются на детских редких болезнях
+приём_пациентов_из_РФ:
+  статус: "уточнить"
+  источник_url: https://www.sjdhospitalbarcelona.org/en/international-patients
+  примечание: требует уточнения
+режим_работы:
+  клиника: Круглосуточно
+  отдел_международных_пациентов: Пн-Пт 09:00-17:00
+  источник_url: https://www.sjdhospitalbarcelona.org/en/international-patients
+источники:
+  - url: https://www.sjdhospitalbarcelona.org/en/international-patients
+    описание: Страница для международных пациентов
+    дата_проверки: 2025-01-17
+дата_последней_проверки: 2025-01-17

@@ -1,0 +1,30 @@
+название: Mediclinic City Hospital
+город: Дубай
+страна: ОАЭ
+направление: Нейрохирургия
+адрес: "Dubai Healthcare City, Dubai, UAE"
+контакты:
+  сайт: https://www.mediclinic.ae
+  страница_для_иностранных_пациентов: https://www.mediclinic.ae/en/international-patients
+  email: international@mediclinic.ae
+  телефон: "+971 4 435 9999"
+ключевые_услуги:
+  - Нейрохирургия
+  - Спинальная хирургия
+приём_иностранцев:
+  статус: "да"
+  источник_url: https://www.mediclinic.ae/en/international-patients
+  примечание: не указано
+приём_пациентов_из_РФ:
+  статус: "уточнить"
+  источник_url: https://www.mediclinic.ae/en/international-patients
+  примечание: требует уточнения
+режим_работы:
+  клиника: Круглосуточно
+  отдел_международных_пациентов: Пн-Пт 09:00-17:00
+  источник_url: https://www.mediclinic.ae/en/international-patients
+источники:
+  - url: https://www.mediclinic.ae/en/international-patients
+    описание: Страница для международных пациентов
+    дата_проверки: 2025-02-06
+дата_последней_проверки: 2025-02-06

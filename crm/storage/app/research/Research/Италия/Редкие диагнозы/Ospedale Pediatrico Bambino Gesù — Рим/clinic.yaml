@@ -1,0 +1,31 @@
+название: "Ospedale Pediatrico Bambino Gesù"
+город: Рим
+страна: Италия
+направление: Редкие диагнозы
+адрес: "Piazza Sant'Onofrio 4, 00165 Roma, Italy"
+контакты:
+  сайт: https://www.ospedalebambinogesu.it
+  страница_для_иностранных_пациентов: https://www.ospedalebambinogesu.it/en
+  email: relazioni.internazionali@opbg.net
+  телефон: "+39 06 6859 2435"
+ключевые_услуги:
+  - Педиатрические редкие болезни
+  - Метаболические нарушения
+  - Врождённые аномалии
+приём_иностранцев:
+  статус: "да"
+  источник_url: https://www.ospedalebambinogesu.it/en
+  примечание: Специализируются на педиатрии
+приём_пациентов_из_РФ:
+  статус: "да"
+  источник_url: https://www.ospedalebambinogesu.it/en
+  примечание: не указано
+режим_работы:
+  клиника: Круглосуточно
+  отдел_международных_пациентов: Пн-Пт 09:00-17:00
+  источник_url: https://www.ospedalebambinogesu.it/en
+источники:
+  - url: https://www.ospedalebambinogesu.it/en
+    описание: Официальный сайт
+    дата_проверки: 2025-01-13
+дата_последней_проверки: 2025-01-13

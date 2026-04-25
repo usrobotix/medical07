@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Partner extends Model
 {
@@ -15,6 +16,7 @@ class Partner extends Model
         'name',
         'country_id',
         'city',
+        'address',
         'languages',
         'contact_name',
         'contact_email',
@@ -22,6 +24,7 @@ class Partner extends Model
         'contact_whatsapp',
         'contact_telegram',
         'website_url',
+        'international_page_url',
         'sla_response_hours',
         'sla_result_days',
         'pricing_notes',
@@ -29,10 +32,16 @@ class Partner extends Model
         'status',
         'verification_score',
         'notes',
+        'research_slug',
+        'research_source_path',
+        'research_imported_at',
+        'last_checked_date',
     ];
 
     protected $casts = [
-        'invoice_required' => 'boolean',
+        'invoice_required'      => 'boolean',
+        'research_imported_at'  => 'datetime',
+        'last_checked_date'     => 'date',
     ];
 
     public function layer(): BelongsTo
@@ -65,5 +74,10 @@ class Partner extends Model
     public function verifications(): HasMany
     {
         return $this->hasMany(PartnerVerification::class);
+    }
+
+    public function researchProfile(): HasOne
+    {
+        return $this->hasOne(PartnerResearchProfile::class);
     }
 }

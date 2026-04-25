@@ -1,0 +1,31 @@
+название: IRCCS Policlinico San Donato
+город: Милан
+страна: Италия
+направление: Кардиология
+адрес: "Via Morandi 30, 20097 San Donato Milanese, Italy"
+контакты:
+  сайт: https://www.grupposandonato.it
+  страница_для_иностранных_пациентов: https://www.grupposandonato.it/en/international-patients
+  email: international@grupposandonato.it
+  телефон: "+39 02 5277 4455"
+ключевые_услуги:
+  - Кардиохирургия
+  - Трансплантация сердца
+  - Педиатрическая кардиология
+приём_иностранцев:
+  статус: "да"
+  источник_url: https://www.grupposandonato.it/en/international-patients
+  примечание: не указано
+приём_пациентов_из_РФ:
+  статус: "уточнить"
+  источник_url: https://www.grupposandonato.it/en/international-patients
+  примечание: требует уточнения
+режим_работы:
+  клиника: Круглосуточно
+  отдел_международных_пациентов: Пн-Пт 09:00-17:00
+  источник_url: https://www.grupposandonato.it/en/international-patients
+источники:
+  - url: https://www.grupposandonato.it/en/international-patients
+    описание: Официальный сайт
+    дата_проверки: 2025-01-16
+дата_последней_проверки: 2025-01-16

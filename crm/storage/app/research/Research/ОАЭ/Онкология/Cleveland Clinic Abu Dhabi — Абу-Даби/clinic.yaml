@@ -1,0 +1,31 @@
+название: Cleveland Clinic Abu Dhabi
+город: Абу-Даби
+страна: ОАЭ
+направление: Онкология
+адрес: "Al Maryah Island, Abu Dhabi, UAE"
+контакты:
+  сайт: https://www.clevelandclinicabudhabi.ae
+  страница_для_иностранных_пациентов: https://www.clevelandclinicabudhabi.ae/en/international-patients
+  email: international@clevelandclinicabudhabi.ae
+  телефон: "+971 2 659 0200"
+ключевые_услуги:
+  - Онкология
+  - Хирургия рака
+  - Радиотерапия
+приём_иностранцев:
+  статус: "да"
+  источник_url: https://www.clevelandclinicabudhabi.ae/en/international-patients
+  примечание: Специализированный международный отдел
+приём_пациентов_из_РФ:
+  статус: "да"
+  источник_url: https://www.clevelandclinicabudhabi.ae/en/international-patients
+  примечание: не указано
+режим_работы:
+  клиника: Круглосуточно
+  отдел_международных_пациентов: Пн-Пт 08:00-20:00
+  источник_url: https://www.clevelandclinicabudhabi.ae/en/international-patients
+источники:
+  - url: https://www.clevelandclinicabudhabi.ae/en/international-patients
+    описание: Страница для международных пациентов
+    дата_проверки: 2025-02-10
+дата_последней_проверки: 2025-02-10
