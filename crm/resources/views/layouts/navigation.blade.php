@@ -59,6 +59,10 @@
                             <a href="{{ route('kb.verification-checklists.index') }}" class="block px-4 py-2 text-ys-s text-dc dc-transition hover:bg-surface-hover {{ request()->routeIs('kb.verification-checklists.*') ? 'font-semibold' : '' }}">Чек-листы верификации</a>
                             <a href="{{ route('kb.message-templates.index') }}" class="block px-4 py-2 text-ys-s text-dc dc-transition hover:bg-surface-hover {{ request()->routeIs('kb.message-templates.*') ? 'font-semibold' : '' }}">Шаблоны сообщений</a>
                             <a href="{{ route('kb.partner-verifications.index') }}" class="block px-4 py-2 text-ys-s text-dc dc-transition hover:bg-surface-hover {{ request()->routeIs('kb.partner-verifications.*') ? 'font-semibold' : '' }}">Проверки партнёров</a>
+                            @hasanyrole('admin|manager')
+                            <div class="border-t my-1 border-dc"></div>
+                            <a href="{{ route('kb.tech') }}" class="block px-4 py-2 text-ys-s text-dc dc-transition hover:bg-surface-hover {{ request()->routeIs('kb.tech') ? 'font-semibold' : '' }}">⚙ Тех. документация</a>
+                            @endhasanyrole
                         </div>
                     </div>
                 </div>
@@ -183,6 +187,11 @@
                 <x-responsive-nav-link :href="route('kb.partner-verifications.index')" :active="request()->routeIs('kb.partner-verifications.*')">
                     Проверки партнёров
                 </x-responsive-nav-link>
+                @hasanyrole('admin|manager')
+                <x-responsive-nav-link :href="route('kb.tech')" :active="request()->routeIs('kb.tech')">
+                    ⚙ Тех. документация
+                </x-responsive-nav-link>
+                @endhasanyrole
             </div>
         </div>
 
