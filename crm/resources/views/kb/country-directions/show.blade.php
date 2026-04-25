@@ -2,14 +2,12 @@
     <x-slot name="header">
         <div class="flex items-center justify-between gap-3">
             <div class="flex items-center gap-3">
-                <a href="{{ route('kb.country-directions.index') }}" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-sm">← Направления по странам</a>
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    {{ $countryDirection->title }}
-                </h2>
+                <a href="{{ route('kb.country-directions.index') }}" class="text-dc-secondary hover:text-dc text-ys-s dc-transition">← Направления по странам</a>
+                <h2 class="text-ys-l font-semibold text-dc leading-tight">{{ $countryDirection->title }}</h2>
             </div>
             @auth
                 @if(auth()->user()->hasAnyRole(['admin', 'manager']))
-                    <a href="{{ route('kb.country-directions.edit', $countryDirection) }}" class="px-4 py-1.5 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">Редактировать</a>
+                    <x-dc-button variant="contour" size="s" href="{{ route('kb.country-directions.edit', $countryDirection) }}">Редактировать</x-dc-button>
                 @endif
             @endauth
         </div>
@@ -18,43 +16,39 @@
     <div class="py-8">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            {{-- Main info --}}
-            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
-                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Основная информация</h3>
-                <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
+            <x-dc-card padding="lg" shadow="card">
+                <h3 class="text-ys-m-s font-semibold text-dc mb-4">Основная информация</h3>
+                <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
                     <div>
-                        <dt class="text-gray-500 dark:text-gray-400">Страна</dt>
-                        <dd class="text-gray-900 dark:text-gray-100">{{ $countryDirection->country?->name_ru ?? '—' }}</dd>
+                        <dt class="text-ys-xs text-dc-secondary">Страна</dt>
+                        <dd class="text-ys-s text-dc mt-0.5">{{ $countryDirection->country?->name_ru ?? '—' }}</dd>
                     </div>
                     <div>
-                        <dt class="text-gray-500 dark:text-gray-400">Ниша</dt>
-                        <dd class="text-gray-900 dark:text-gray-100">{{ $countryDirection->niche?->name ?? '—' }}</dd>
+                        <dt class="text-ys-xs text-dc-secondary">Ниша</dt>
+                        <dd class="text-ys-s text-dc mt-0.5">{{ $countryDirection->niche?->name ?? '—' }}</dd>
                     </div>
                 </dl>
-            </div>
+            </x-dc-card>
 
-            {{-- What to look for --}}
             @if($countryDirection->what_to_look_for)
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
-                    <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">Что искать</h3>
-                    <p class="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{ $countryDirection->what_to_look_for }}</p>
-                </div>
+                <x-dc-card padding="lg" shadow="card">
+                    <h3 class="text-ys-s font-semibold text-dc mb-3">Что искать</h3>
+                    <p class="text-ys-s text-dc whitespace-pre-wrap">{{ $countryDirection->what_to_look_for }}</p>
+                </x-dc-card>
             @endif
 
-            {{-- Search queries --}}
             @if($countryDirection->search_queries)
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
-                    <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">Поисковые запросы</h3>
-                    <p class="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-mono bg-gray-50 dark:bg-gray-900 p-3 rounded-md">{{ $countryDirection->search_queries }}</p>
-                </div>
+                <x-dc-card padding="lg" shadow="card">
+                    <h3 class="text-ys-s font-semibold text-dc mb-3">Поисковые запросы</h3>
+                    <pre class="text-ys-s text-dc bg-dc-gray-10 p-3 rounded-2xs font-mono whitespace-pre-wrap overflow-x-auto">{{ $countryDirection->search_queries }}</pre>
+                </x-dc-card>
             @endif
 
-            {{-- Notes --}}
             @if($countryDirection->notes)
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
-                    <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100 mb-3">Заметки</h3>
-                    <p class="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{ $countryDirection->notes }}</p>
-                </div>
+                <x-dc-card padding="lg" shadow="card">
+                    <h3 class="text-ys-s font-semibold text-dc mb-3">Заметки</h3>
+                    <p class="text-ys-s text-dc whitespace-pre-wrap">{{ $countryDirection->notes }}</p>
+                </x-dc-card>
             @endif
 
         </div>
