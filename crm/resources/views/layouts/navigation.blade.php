@@ -34,11 +34,15 @@
 
                     <!-- Knowledge Base Dropdown -->
                     <div class="relative flex items-center" x-data="{ kbOpen: false }" @click.outside="kbOpen = false">
+                        @php
+                            $kbActive = request()->routeIs(
+                                'countries.*', 'niches.*', 'country-directions.*',
+                                'verification-checklists.*', 'message-templates.*', 'partner-verifications.*'
+                            );
+                        @endphp
                         <button @click="kbOpen = !kbOpen"
                             class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-none
-                                {{ request()->routeIs('countries.*') || request()->routeIs('niches.*') || request()->routeIs('country-directions.*') || request()->routeIs('verification-checklists.*') || request()->routeIs('message-templates.*') || request()->routeIs('partner-verifications.*')
-                                    ? 'border-indigo-400 text-gray-900 dark:text-gray-100'
-                                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700' }}">
+                                {{ $kbActive ? 'border-indigo-400 text-gray-900 dark:text-gray-100' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700' }}">
                             Справочники
                             <svg class="ms-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
