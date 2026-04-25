@@ -46,6 +46,7 @@ class PartnerVerificationController extends Controller
 
     public function create(Request $request)
     {
+		
         $partners = Partner::orderBy('name')->get();
         $checklists = VerificationChecklist::orderBy('name')->get();
         $selectedPartnerId = $request->partner_id;
