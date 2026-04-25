@@ -3,6 +3,7 @@
 use App\Http\Controllers\CaseBoardController;
 use App\Http\Controllers\CaseStatusController;
 use App\Http\Controllers\Kb\CountryController as KbCountryController;
+use App\Http\Controllers\Kb\TechPageController as KbTechPageController;
 use App\Http\Controllers\Kb\CountryDirectionController as KbCountryDirectionController;
 use App\Http\Controllers\Kb\MessageTemplateController as KbMessageTemplateController;
 use App\Http\Controllers\Kb\NicheController as KbNicheController;
@@ -57,6 +58,8 @@ Route::middleware('auth')->group(function () {
 
     // KB write (admin/manager)
     Route::prefix('kb')->name('kb.')->middleware('role:admin|manager')->group(function () {
+        Route::get('tech', KbTechPageController::class)->name('tech');
+
         Route::resource('partners', KbPartnerController::class)->except(['index', 'show']);
         Route::post('partners/{partner}/start-verification', [KbPartnerController::class, 'startVerification'])
             ->name('partners.start-verification');
