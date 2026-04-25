@@ -16,43 +16,34 @@
             {{-- Filters --}}
             <x-dc-card padding="md" shadow="card">
                 <form method="GET" action="{{ route('kb.partners.index') }}" class="flex flex-wrap gap-3 items-end">
-                    <div>
-                        <label class="block text-ys-xs font-medium text-dc-secondary mb-1">Страна</label>
-                        <select name="country_id" class="text-ys-s h-9 px-3 rounded-2xs border dc-transition bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-dc-yellow-100" style="border-color:var(--color-border);color:var(--color-text)">
-                            <option value="">Все страны</option>
-                            @foreach($countries as $country)
-                                <option value="{{ $country->id }}" @selected(request('country_id') == $country->id)>{{ $country->name_ru }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-ys-xs font-medium text-dc-secondary mb-1">Тип</label>
-                        <select name="type" class="text-ys-s h-9 px-3 rounded-2xs border dc-transition bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-dc-yellow-100" style="border-color:var(--color-border);color:var(--color-text)">
-                            <option value="">Все типы</option>
-                            <option value="clinic" @selected(request('type') === 'clinic')>Клиника</option>
-                            <option value="translator" @selected(request('type') === 'translator')>Переводчик</option>
-                            <option value="curator" @selected(request('type') === 'curator')>Куратор</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-ys-xs font-medium text-dc-secondary mb-1">Статус</label>
-                        <select name="status" class="text-ys-s h-9 px-3 rounded-2xs border dc-transition bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-dc-yellow-100" style="border-color:var(--color-border);color:var(--color-text)">
-                            <option value="">Все статусы</option>
-                            <option value="new" @selected(request('status') === 'new')>Новый</option>
-                            <option value="verified" @selected(request('status') === 'verified')>Верифицирован</option>
-                            <option value="active" @selected(request('status') === 'active')>Активен</option>
-                            <option value="frozen" @selected(request('status') === 'frozen')>Заморожен</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-ys-xs font-medium text-dc-secondary mb-1">Ниша</label>
-                        <select name="niche_id" class="text-ys-s h-9 px-3 rounded-2xs border dc-transition bg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-dc-yellow-100" style="border-color:var(--color-border);color:var(--color-text)">
-                            <option value="">Все ниши</option>
-                            @foreach($niches as $niche)
-                                <option value="{{ $niche->id }}" @selected(request('niche_id') == $niche->id)>{{ $niche->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <x-dc-select name="country_id" label="Страна" placeholder="Все страны" :selected="request('country_id')">
+                        @foreach($countries as $country)
+                            <option value="{{ $country->id }}" @selected(request('country_id') == $country->id)>{{ $country->name_ru }}</option>
+                        @endforeach
+                    </x-dc-select>
+
+                    <x-dc-select
+                        name="type"
+                        label="Тип"
+                        placeholder="Все типы"
+                        :options="['clinic' => 'Клиника', 'translator' => 'Переводчик', 'curator' => 'Куратор']"
+                        :selected="request('type')"
+                    />
+
+                    <x-dc-select
+                        name="status"
+                        label="Статус"
+                        placeholder="Все статусы"
+                        :options="['new' => 'Новый', 'verified' => 'Верифицирован', 'active' => 'Активен', 'frozen' => 'Заморожен']"
+                        :selected="request('status')"
+                    />
+
+                    <x-dc-select name="niche_id" label="Ниша" placeholder="Все ниши" :selected="request('niche_id')">
+                        @foreach($niches as $niche)
+                            <option value="{{ $niche->id }}" @selected(request('niche_id') == $niche->id)>{{ $niche->name }}</option>
+                        @endforeach
+                    </x-dc-select>
+
                     <div class="flex gap-2">
                         <x-dc-button type="submit" variant="action" size="s">Применить</x-dc-button>
                         <x-dc-button variant="contour" size="s" href="{{ route('kb.partners.index') }}">Сбросить</x-dc-button>

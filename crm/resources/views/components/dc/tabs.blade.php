@@ -21,10 +21,13 @@
         @endforeach
     </div>
 
-    <!-- Panels -->
+    <!-- Panels — access named slots via $slot->{'panel0'}, $slot->{'panel1'}, etc. -->
     @foreach ($tabs as $i => $tab)
+        @php $panelName = 'panel' . $i; @endphp
         <div x-show="active === {{ $i }}" class="pt-4">
-            {{ ${'panel' . $i} ?? '' }}
+            @if (isset($$panelName))
+                {{ $$panelName }}
+            @endif
         </div>
     @endforeach
 </div>

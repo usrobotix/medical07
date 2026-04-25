@@ -8,12 +8,21 @@
 ])
 
 @php
+// Normal sizes vs icon-only sizes defined separately to avoid fragile string replacement
 $sizeClasses = [
     'xxs' => 'h-6 px-[10px] text-ys-xs rounded-3xs gap-1',
     'xs'  => 'h-8 px-3 text-ys-s rounded-xs gap-2',
     's'   => 'h-9 px-[14px] text-ys-s rounded-2xs gap-2',
     'm'   => 'h-11 px-5 text-ys-m-s rounded-2xs gap-2',
     'l'   => 'h-[52px] px-6 text-ys-l rounded-md gap-2',
+];
+
+$iconOnlySizeClasses = [
+    'xxs' => 'h-6 px-1.5 text-ys-xs rounded-3xs',
+    'xs'  => 'h-8 px-2 text-ys-s rounded-xs',
+    's'   => 'h-9 px-2 text-ys-s rounded-2xs',
+    'm'   => 'h-11 px-3 text-ys-m-s rounded-2xs',
+    'l'   => 'h-[52px] px-3 text-ys-l rounded-md',
 ];
 
 $variantClasses = [
@@ -27,13 +36,13 @@ $variantClasses = [
 
 $base = 'dc-btn inline-flex items-center justify-center font-medium dc-transition active:scale-[.98] focus:outline-none focus-visible:outline-none select-none cursor-pointer border-0';
 
-$classes = $base
-    . ' ' . ($sizeClasses[$size] ?? $sizeClasses['s'])
-    . ' ' . ($variantClasses[$variant] ?? $variantClasses['normal']);
+$resolvedSize = $iconOnly
+    ? ($iconOnlySizeClasses[$size] ?? $iconOnlySizeClasses['s'])
+    : ($sizeClasses[$size] ?? $sizeClasses['s']);
 
-if ($iconOnly) {
-    $classes = str_replace('px-3 ', 'px-2 ', str_replace('px-[10px] ', 'px-1.5 ', $classes));
-}
+$classes = $base
+    . ' ' . $resolvedSize
+    . ' ' . ($variantClasses[$variant] ?? $variantClasses['normal']);
 @endphp
 
 @if ($href)
