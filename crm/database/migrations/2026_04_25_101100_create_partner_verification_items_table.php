@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->timestamps();
 
-            $table->unique(['partner_verification_id', 'checklist_item_id']);
+            $table->unique(['partner_verification_id', 'checklist_item_id'], 'pvi_verif_item_unique');
         });
     }
 
