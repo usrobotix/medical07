@@ -29,13 +29,13 @@ class RestoreDatabaseFromBackupJob implements ShouldQueue
     public function __construct(
         public readonly int $sourceBackupId,
         public readonly int $restoreRecordId,
-        public readonly string $restoreUuid = '',
+        public readonly ?string $restoreUuid = null,
     ) {}
 
     public function handle(YandexDiskService $yandex): void
     {
         $progress = new RestoreProgressService();
-        $hasUuid  = $this->restoreUuid !== '';
+        $hasUuid  = $this->restoreUuid !== null;
 
         $sourceBackup  = Backup::findOrFail($this->sourceBackupId);
         $restoreRecord = Backup::findOrFail($this->restoreRecordId);
@@ -112,15 +112,13 @@ class RestoreDatabaseFromBackupJob implements ShouldQueue
             @unlink($sqlPath);
             $this->removeDir($tmpDir);
 
-            $finishedAt = now()->toIso8601String();
-
             if ($hasUuid) {
                 $progress->write($this->restoreUuid, [
                     'status'           => 'done',
                     'progress_percent' => 100,
                     'current_step'     => 'done',
                     'error_message'    => null,
-                    'finished_at'      => $finishedAt,
+                    'finished_at'      => now()->toIso8601String(),
                 ]);
                 // Purge stale progress files from previous restores
                 $progress->purgeOld(48);
@@ -445,7 +443,7 @@ class RestoreDatabaseFromBackupJob implements ShouldQueue
     private function executeSqlFile(
         string $sqlPath,
         Backup $restoreRecord,
-        string $restoreUuid,
+        ?string $restoreUuid,
         RestoreProgressService $progress
     ): void {
         // Use a fresh, dedicated PDO connection for restore execution so that any
@@ -469,7 +467,7 @@ class RestoreDatabaseFromBackupJob implements ShouldQueue
         $buffer          = '';
         $bytesRead       = 0;
         $lastProgressPct = 35;
-        $hasUuid         = $restoreUuid !== '';
+        $hasUuid         = $restoreUuid !== null;
 
         while (!feof($handle)) {
             $line = fgets($handle, self::SQL_READ_BUFFER);

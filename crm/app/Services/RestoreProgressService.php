@@ -76,10 +76,10 @@ class RestoreProgressService
      */
     public function resolvedPath(string $uuid): string
     {
-        if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/', $uuid)) {
+        if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $uuid)) {
             throw new \InvalidArgumentException('Invalid restore UUID format.');
         }
-        return $this->dir . DIRECTORY_SEPARATOR . $uuid . '.json';
+        return $this->dir . DIRECTORY_SEPARATOR . strtolower($uuid) . '.json';
     }
 
     private function ensureDir(): void
