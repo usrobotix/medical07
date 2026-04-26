@@ -7,8 +7,10 @@ use App\Jobs\RestoreDatabaseFromBackupJob;
 use App\Jobs\RunBackupJob;
 use App\Models\AuditEvent;
 use App\Models\Backup;
+use App\Services\RestoreProgressService;
 use App\Services\YandexDiskService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class BackupController extends Controller
 {
@@ -111,6 +113,28 @@ class BackupController extends Controller
     }
 
     /**
+     * Return restore progress from the filesystem progress file.
+     * This endpoint works even after the backups table has been wiped by the SQL restore.
+     */
+    public function restoreStatus(string $restoreUuid): \Illuminate\Http\JsonResponse
+    {
+        $progress = new RestoreProgressService();
+
+        try {
+            $data = $progress->read($restoreUuid);
+        } catch (\InvalidArgumentException) {
+            abort(400, 'Invalid restore UUID.');
+        }
+
+        if ($data === null) {
+            // File missing: restore likely completed and was cleaned up, or never started.
+            return response()->json(['status' => 'gone', 'progress_percent' => 0], 410);
+        }
+
+        return response()->json($data);
+    }
+
+    /**
      * Start a DB restore from an existing backup record.
      * Creates a restore tracking record and dispatches the async job.
      */
@@ -143,6 +167,21 @@ class BackupController extends Controller
             'size_bytes'       => 0,
         ]);
 
+        // Generate a UUID for filesystem-based progress tracking.
+        // This UUID is passed to the job and stored in the session so the frontend
+        // can poll /backups/restore/{uuid}/status even after the backups table is
+        // wiped and recreated by the SQL restore.
+        $restoreUuid = (string) Str::uuid();
+        $progress    = new RestoreProgressService();
+        $progress->write($restoreUuid, [
+            'status'            => 'queued',
+            'progress_percent'  => 0,
+            'current_step'      => 'queued',
+            'error_message'     => null,
+            'finished_at'       => null,
+            'restore_record_id' => $restoreRecord->id,
+        ]);
+
         AuditEvent::log(
             'backup.restore_queued',
             [
@@ -153,10 +192,11 @@ class BackupController extends Controller
             $backup->id
         );
 
-        RestoreDatabaseFromBackupJob::dispatch($backup->id, $restoreRecord->id);
+        RestoreDatabaseFromBackupJob::dispatch($backup->id, $restoreRecord->id, $restoreUuid);
 
         return redirect()->route('admin.technical.backups.index')
-            ->with('success', 'Восстановление БД поставлено в очередь. Следите за прогрессом в таблице ниже.');
+            ->with('success', 'Восстановление БД поставлено в очередь. Следите за прогрессом в таблице ниже.')
+            ->with('restore_uuid', $restoreUuid);
     }
 }
 

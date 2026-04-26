@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use ZipArchive;
 
 class RunBackupJob implements ShouldQueue
@@ -142,6 +143,12 @@ class RunBackupJob implements ShouldQueue
             ]);
 
         } catch (\Throwable $e) {
+            Log::error('RunBackupJob failed', [
+                'backup_id' => $this->backupId,
+                'exception' => $e->getMessage(),
+                'trace'     => $e->getTraceAsString(),
+            ]);
+
             $backup->update([
                 'status'        => 'failed',
                 'error_message' => $e->getMessage(),

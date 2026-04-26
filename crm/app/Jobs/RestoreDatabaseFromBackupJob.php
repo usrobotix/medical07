@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\AuditEvent;
 use App\Models\Backup;
+use App\Services\RestoreProgressService;
 use App\Services\YandexDiskService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -28,88 +29,183 @@ class RestoreDatabaseFromBackupJob implements ShouldQueue
     public function __construct(
         public readonly int $sourceBackupId,
         public readonly int $restoreRecordId,
+        public readonly ?string $restoreUuid = null,
     ) {}
 
     public function handle(YandexDiskService $yandex): void
     {
+        $progress = new RestoreProgressService();
+        $hasUuid  = $this->restoreUuid !== null;
+
         $sourceBackup  = Backup::findOrFail($this->sourceBackupId);
         $restoreRecord = Backup::findOrFail($this->restoreRecordId);
 
-        $restoreRecord->update([
+        $this->dbUpdate($restoreRecord, [
             'status'           => 'running',
             'started_at'       => now(),
             'progress_percent' => 5,
             'current_step'     => 'snapshot',
         ]);
 
+        if ($hasUuid) {
+            $progress->write($this->restoreUuid, [
+                'status'           => 'running',
+                'progress_percent' => 5,
+                'current_step'     => 'snapshot',
+                'error_message'    => null,
+                'finished_at'      => null,
+            ]);
+        }
+
         $tmpDir = null;
 
         try {
             // ── Step 1: Safety snapshot ─────────────────────────────────────────
             $this->createSafetySnapshot($restoreRecord, $yandex);
-            $restoreRecord->update(['progress_percent' => 20, 'current_step' => 'download']);
+            $this->dbUpdate($restoreRecord, ['progress_percent' => 20, 'current_step' => 'download']);
+            if ($hasUuid) {
+                $progress->write($this->restoreUuid, [
+                    'status'           => 'running',
+                    'progress_percent' => 20,
+                    'current_step'     => 'download',
+                    'error_message'    => null,
+                    'finished_at'      => null,
+                ]);
+            }
 
             // ── Step 2: Resolve archive path ────────────────────────────────────
             $archivePath = $this->resolveArchivePath($sourceBackup, $yandex);
-            $restoreRecord->update(['progress_percent' => 30, 'current_step' => 'extract']);
+            $this->dbUpdate($restoreRecord, ['progress_percent' => 30, 'current_step' => 'extract']);
+            if ($hasUuid) {
+                $progress->write($this->restoreUuid, [
+                    'status'           => 'running',
+                    'progress_percent' => 30,
+                    'current_step'     => 'extract',
+                    'error_message'    => null,
+                    'finished_at'      => null,
+                ]);
+            }
 
             // ── Step 3: Extract SQL from archive ────────────────────────────────
             $tmpDir  = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'restore_' . $this->restoreRecordId . '_' . uniqid();
             @mkdir($tmpDir, 0755, true);
 
             $sqlPath = $this->extractSql($archivePath, $tmpDir);
-            $restoreRecord->update(['progress_percent' => 35, 'current_step' => 'restore_db']);
+            $this->dbUpdate($restoreRecord, ['progress_percent' => 35, 'current_step' => 'restore_db']);
+            if ($hasUuid) {
+                $progress->write($this->restoreUuid, [
+                    'status'           => 'running',
+                    'progress_percent' => 35,
+                    'current_step'     => 'restore_db',
+                    'error_message'    => null,
+                    'finished_at'      => null,
+                ]);
+            }
 
             // ── Step 4: Execute SQL via PDO ─────────────────────────────────────
-            $this->executeSqlFile($sqlPath, $restoreRecord);
+            // NOTE: During SQL execution the backups table is dropped and recreated,
+            // so DB-based progress updates may fail after that point.
+            // Filesystem-based progress (via restoreUuid) is the reliable fallback.
+            $this->executeSqlFile($sqlPath, $restoreRecord, $this->restoreUuid, $progress);
 
             // Cleanup temp files
             @unlink($sqlPath);
             $this->removeDir($tmpDir);
 
-            $restoreRecord->update([
+            if ($hasUuid) {
+                $progress->write($this->restoreUuid, [
+                    'status'           => 'done',
+                    'progress_percent' => 100,
+                    'current_step'     => 'done',
+                    'error_message'    => null,
+                    'finished_at'      => now()->toIso8601String(),
+                ]);
+                // Purge stale progress files from previous restores
+                $progress->purgeOld(48);
+            }
+
+            $this->dbUpdate($restoreRecord, [
                 'status'           => 'done',
                 'progress_percent' => 100,
                 'current_step'     => 'done',
                 'finished_at'      => now(),
             ]);
 
-            AuditEvent::create([
-                'user_id'     => $restoreRecord->user_id,
-                'action'      => 'backup.restored',
-                'entity_type' => 'backup',
-                'entity_id'   => $sourceBackup->id,
-                'ip'          => null,
-                'payload'     => [
-                    'restore_record_id' => $restoreRecord->id,
-                    'source_backup_id'  => $sourceBackup->id,
-                ],
-                'created_at'  => now(),
-            ]);
+            try {
+                AuditEvent::create([
+                    'user_id'     => $restoreRecord->user_id,
+                    'action'      => 'backup.restored',
+                    'entity_type' => 'backup',
+                    'entity_id'   => $sourceBackup->id,
+                    'ip'          => null,
+                    'payload'     => [
+                        'restore_record_id' => $restoreRecord->id,
+                        'source_backup_id'  => $sourceBackup->id,
+                    ],
+                    'created_at'  => now(),
+                ]);
+            } catch (\Throwable $auditEx) {
+                Log::warning('RestoreJob: could not write audit event after restore: ' . $auditEx->getMessage());
+            }
 
         } catch (\Throwable $e) {
+            Log::error('RestoreDatabaseFromBackupJob failed', [
+                'source_backup_id'  => $this->sourceBackupId,
+                'restore_record_id' => $this->restoreRecordId,
+                'restore_uuid'      => $this->restoreUuid,
+                'exception'         => $e->getMessage(),
+                'trace'             => $e->getTraceAsString(),
+            ]);
+
             if ($tmpDir) {
                 $this->removeDir($tmpDir);
             }
 
-            $restoreRecord->update([
+            if ($hasUuid) {
+                $progress->write($this->restoreUuid, [
+                    'status'           => 'failed',
+                    'progress_percent' => 0,
+                    'current_step'     => 'failed',
+                    'error_message'    => $e->getMessage(),
+                    'finished_at'      => now()->toIso8601String(),
+                ]);
+            }
+
+            $this->dbUpdate($restoreRecord, [
                 'status'        => 'failed',
                 'error_message' => $e->getMessage(),
                 'current_step'  => 'failed',
                 'finished_at'   => now(),
             ]);
 
-            AuditEvent::create([
-                'user_id'     => $restoreRecord->user_id,
-                'action'      => 'backup.restore_failed',
-                'entity_type' => 'backup',
-                'entity_id'   => $sourceBackup->id,
-                'ip'          => null,
-                'payload'     => ['error' => $e->getMessage()],
-                'created_at'  => now(),
-            ]);
+            try {
+                AuditEvent::create([
+                    'user_id'     => $restoreRecord->user_id,
+                    'action'      => 'backup.restore_failed',
+                    'entity_type' => 'backup',
+                    'entity_id'   => $sourceBackup->id,
+                    'ip'          => null,
+                    'payload'     => ['error' => $e->getMessage()],
+                    'created_at'  => now(),
+                ]);
+            } catch (\Throwable $auditEx) {
+                Log::warning('RestoreJob: could not write audit event after failure: ' . $auditEx->getMessage());
+            }
 
             throw $e;
+        }
+    }
+
+    /**
+     * Try to update the restore record in the DB.
+     * After the SQL restore wipes and recreates the backups table, updates may fail silently.
+     */
+    private function dbUpdate(Backup $record, array $data): void
+    {
+        try {
+            $record->update($data);
+        } catch (\Throwable $e) {
+            Log::debug('RestoreJob: DB progress update failed (expected during restore): ' . $e->getMessage());
         }
     }
 
@@ -339,9 +435,17 @@ class RestoreDatabaseFromBackupJob implements ShouldQueue
      * A dedicated PDO connection is used for SQL execution so that the Eloquent
      * connection (used for progress updates) is never affected by session-level
      * state from the dump.
+     *
+     * Progress is written to the filesystem via RestoreProgressService so it
+     * survives the DROP/CREATE of the backups table during the restore.
+     * DB-based progress updates are attempted but silently ignored on failure.
      */
-    private function executeSqlFile(string $sqlPath, Backup $restoreRecord): void
-    {
+    private function executeSqlFile(
+        string $sqlPath,
+        Backup $restoreRecord,
+        ?string $restoreUuid,
+        RestoreProgressService $progress
+    ): void {
         // Use a fresh, dedicated PDO connection for restore execution so that any
         // session-level state (remaining LOCK TABLES, custom SET flags, etc.) never
         // bleeds into the Eloquent connection that performs progress updates.
@@ -363,6 +467,7 @@ class RestoreDatabaseFromBackupJob implements ShouldQueue
         $buffer          = '';
         $bytesRead       = 0;
         $lastProgressPct = 35;
+        $hasUuid         = $restoreUuid !== null;
 
         while (!feof($handle)) {
             $line = fgets($handle, self::SQL_READ_BUFFER);
@@ -403,11 +508,25 @@ class RestoreDatabaseFromBackupJob implements ShouldQueue
                 }
 
                 // Update progress: restore_db occupies 35–95%
-                $filePct     = (int)(($bytesRead / $fileSize) * 100);
-                $overallPct  = 35 + (int)(($filePct / 100) * 60);
+                $filePct    = (int)(($bytesRead / $fileSize) * 100);
+                $overallPct = 35 + (int)(($filePct / 100) * 60);
                 if ($overallPct >= $lastProgressPct + 5) {
                     $lastProgressPct = $overallPct;
-                    $restoreRecord->update(['progress_percent' => min($overallPct, 95)]);
+                    $pct = min($overallPct, 95);
+
+                    // Filesystem progress is the primary mechanism (survives DB restore).
+                    if ($hasUuid) {
+                        $progress->write($restoreUuid, [
+                            'status'           => 'running',
+                            'progress_percent' => $pct,
+                            'current_step'     => 'restore_db',
+                            'error_message'    => null,
+                            'finished_at'      => null,
+                        ]);
+                    }
+
+                    // DB update is best-effort: the backups table may not exist mid-restore.
+                    $this->dbUpdate($restoreRecord, ['progress_percent' => $pct]);
                 }
             }
         }
