@@ -14,6 +14,7 @@ class ImportResearchPartners extends Command
 {
     protected $signature = 'research:import-partners
                             {--path= : Override the source path (default: config research.source_path)}
+                            {--sample : Use the committed Windows-safe sample dataset (storage/app/research/sample/)}
                             {--dry-run : Parse files and report without writing to the database}';
 
     protected $description = 'Import clinic research data from Research/ YAML files into CRM partners';
@@ -50,17 +51,25 @@ class ImportResearchPartners extends Command
 
     public function handle(): int
     {
-        $sourcePath = $this->option('path') ?? config('research.source_path');
-        $dryRun     = (bool) $this->option('dry-run');
+        $dryRun = (bool) $this->option('dry-run');
 
-        if (! is_dir($sourcePath)) {
-            $this->error("Source path not found: {$sourcePath}");
-            $this->line('Run: mkdir -p ' . $sourcePath . ' and copy Research/ folder there.');
-            return Command::FAILURE;
+        // --sample uses the committed Windows-safe sample dataset
+        if ($this->option('sample')) {
+            $sourcePath   = storage_path('app/research/sample');
+            $researchRoot = $sourcePath;
+        } else {
+            $sourcePath = $this->option('path') ?? config('research.source_path');
+
+            if (! is_dir($sourcePath)) {
+                $this->error("Source path not found: {$sourcePath}");
+                $this->line('Run: mkdir -p ' . $sourcePath . ' and copy Research/ folder there.');
+                $this->line('Tip: use --sample to run against the committed sample dataset.');
+                return Command::FAILURE;
+            }
+
+            // Find the Research/ subdirectory if source_path points to a parent
+            $researchRoot = is_dir($sourcePath . '/Research') ? $sourcePath . '/Research' : $sourcePath;
         }
-
-        // Find the Research/ subdirectory if source_path points to a parent
-        $researchRoot = is_dir($sourcePath . '/Research') ? $sourcePath . '/Research' : $sourcePath;
 
         $this->info("Scanning: {$researchRoot}");
         if ($dryRun) {
@@ -76,8 +85,8 @@ class ImportResearchPartners extends Command
 
         $this->info('Found ' . count($files) . ' clinic.yaml files.');
 
-        // Ensure a default partner layer exists for imported clinics
-        $defaultLayer = PartnerLayer::firstOrCreate(
+        // Ensure a default partner layer exists for imported clinics (skip in dry-run)
+        $defaultLayer = $dryRun ? null : PartnerLayer::firstOrCreate(
             ['code' => 'imported'],
             ['name' => 'Импорт (Research)', 'sort_order' => 99]
         );
@@ -127,7 +136,7 @@ class ImportResearchPartners extends Command
     private function processFile(
         string $yamlPath,
         string $researchRoot,
-        PartnerLayer $defaultLayer,
+        ?PartnerLayer $defaultLayer,
         bool $dryRun,
         array &$stats
     ): void {
