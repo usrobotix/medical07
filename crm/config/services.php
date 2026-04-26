@@ -33,7 +33,9 @@ return [
 
     'yandex_disk' => [
         'token' => env('YANDEX_DISK_TOKEN', ''),
-        'folder' => env('YANDEX_DISK_FOLDER', '/medical07/backups'),
+        // For disk.app_folder scope: keep it relative (e.g. "backups" or "backups/prod"),
+        // the service will normalize to "app:/..."
+        'folder' => env('YANDEX_DISK_FOLDER', 'backups'),
     ],
 
 ];
