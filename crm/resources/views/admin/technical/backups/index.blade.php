@@ -18,6 +18,19 @@
             </div>
         @endif
 
+        {{-- Windows / OpenServer hint when queue driver is sync --}}
+        @if($queueIsSync)
+            <div class="mb-4 p-4 bg-yellow-50 border border-yellow-300 text-yellow-800 rounded-2xs text-sm" id="queue-sync-hint">
+                <strong>&#9888; Очередь не настроена (QUEUE_CONNECTION=sync)</strong> — длинные резервные копии (файлы) могут прерваться из-за timeout HTTP-запроса.<br>
+                Для надёжной фоновой обработки выполните в отдельном терминале:
+                <ol class="mt-2 ml-4 list-decimal space-y-1">
+                    <li>Добавьте в <code>.env</code>: <code>QUEUE_CONNECTION=database</code></li>
+                    <li>Создайте таблицы очереди: <code>php artisan queue:table &amp;&amp; php artisan migrate</code></li>
+                    <li>Запустите воркер: <code>php artisan queue:work --tries=1</code></li>
+                </ol>
+            </div>
+        @endif
+
         <div class="flex gap-6">
             {{-- Sidebar --}}
             <div class="w-48 shrink-0">
@@ -25,19 +38,19 @@
                     <nav class="space-y-1">
                         <a href="{{ route('admin.technical.backups.index') }}"
                            class="flex items-center gap-2 px-3 py-2 rounded text-sm font-medium bg-surface-hover text-dc-primary">
-                            💾 Резервные копии
+                            &#128190; Резервные копии
                         </a>
                         <a href="{{ route('admin.technical.schedule.index') }}"
                            class="flex items-center gap-2 px-3 py-2 rounded text-sm font-medium text-dc hover:bg-surface-hover dc-transition">
-                            🕐 Расписание
+                            &#128336; Расписание
                         </a>
                         <a href="{{ route('admin.technical.audit.index') }}"
                            class="flex items-center gap-2 px-3 py-2 rounded text-sm font-medium text-dc hover:bg-surface-hover dc-transition">
-                            📋 Журнал событий
+                            &#128203; Журнал событий
                         </a>
                         <a href="{{ route('admin.technical.logs.index') }}"
                            class="flex items-center gap-2 px-3 py-2 rounded text-sm font-medium text-dc hover:bg-surface-hover dc-transition">
-                            📄 Логи
+                            &#128196; Логи
                         </a>
                     </nav>
                 </x-dc.card>
@@ -137,7 +150,7 @@
                             </div>
                             <div x-data="{ result: null, loading: false }">
                                 <x-dc.button variant="contour" size="s"
-                                             @click="loading=true; fetch('{{ route('admin.technical.backups.test-yandex') }}')
+                                             @click="loading=true; fetch('{{ route(\'admin.technical.backups.test-yandex\') }}')
                                                 .then(r=>r.json())
                                                 .then(d=>{ result=d; loading=false; })
                                                 .catch(e=>{ result={ok:false,message:e.message}; loading=false; })">
@@ -168,15 +181,26 @@
                                             <th class="pb-2 font-medium text-dc-secondary">Пресет</th>
                                             <th class="pb-2 font-medium text-dc-secondary">Форматы</th>
                                             <th class="pb-2 font-medium text-dc-secondary">Размер</th>
-                                            <th class="pb-2 font-medium text-dc-secondary">Статус</th>
+                                            <th class="pb-2 font-medium text-dc-secondary">Статус / Прогресс</th>
                                             <th class="pb-2 font-medium text-dc-secondary">Инициатор</th>
                                             <th class="pb-2 font-medium text-dc-secondary">Действия</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-dc">
                                         @foreach($backups as $backup)
-                                            <tr class="hover:bg-surface-hover dc-transition">
-                                                <td class="py-2 text-dc">{{ $backup->created_at->format('d.m.Y H:i') }}</td>
+                                            @php
+                                                $isActive = in_array($backup->status, ['queued', 'running']);
+                                                $statusColors = ['queued'=>'gray','pending'=>'gray','running'=>'info','done'=>'success','failed'=>'error'];
+                                            @endphp
+                                            <tr class="hover:bg-surface-hover dc-transition"
+                                                @if($isActive)
+                                                    x-data="backupPoller({{ $backup->id }}, {{ json_encode(route('admin.technical.backups.status', $backup)) }})"
+                                                    x-init="start()"
+                                                @endif
+                                                id="backup-row-{{ $backup->id }}">
+                                                <td class="py-2 text-dc">
+                                                    {{ $backup->created_at->timezone(config('app.timezone'))->format('d.m.Y H:i') }}
+                                                </td>
                                                 <td class="py-2 text-dc">
                                                     @php $typeLabels = ['db'=>'БД','files'=>'Файлы','full'=>'Полная']; @endphp
                                                     {{ $typeLabels[$backup->type] ?? $backup->type }}
@@ -184,11 +208,44 @@
                                                 <td class="py-2 text-dc-secondary">{{ $backup->file_preset ?? '—' }}</td>
                                                 <td class="py-2 text-dc-secondary">{{ implode(', ', $backup->formats ?? []) }}</td>
                                                 <td class="py-2 text-dc">{{ $backup->formatted_size }}</td>
-                                                <td class="py-2">
-                                                    @php $statusColors = ['pending'=>'gray','running'=>'info','done'=>'success','failed'=>'error']; @endphp
-                                                    <x-dc.badge :color="$statusColors[$backup->status] ?? 'gray'">
-                                                        {{ $backup->status }}
-                                                    </x-dc.badge>
+                                                <td class="py-2 min-w-[180px]">
+                                                    @if($isActive)
+                                                        {{-- Live status cell --}}
+                                                        <div>
+                                                            <div class="flex items-center gap-2 mb-1">
+                                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
+                                                                      :class="{
+                                                                          'bg-blue-100 text-blue-700': status === 'running',
+                                                                          'bg-gray-100 text-gray-600': status === 'queued' || status === 'pending',
+                                                                          'bg-green-100 text-green-700': status === 'done',
+                                                                          'bg-red-100 text-red-700': status === 'failed',
+                                                                      }"
+                                                                      x-text="statusLabel"></span>
+                                                                <span class="text-xs text-dc-secondary" x-text="stepLabel"></span>
+                                                            </div>
+                                                            <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                                                <div class="h-1.5 rounded-full transition-all duration-300"
+                                                                     :class="{
+                                                                         'bg-blue-500': status === 'running',
+                                                                         'bg-gray-400': status === 'queued' || status === 'pending',
+                                                                         'bg-green-500': status === 'done',
+                                                                         'bg-red-500': status === 'failed',
+                                                                     }"
+                                                                     :style="'width:' + progress + '%'"></div>
+                                                            </div>
+                                                            <div class="text-xs text-dc-secondary mt-0.5" x-text="progress + '%'"></div>
+                                                            <div x-show="errorMsg" class="text-xs text-red-600 mt-1" x-text="errorMsg"></div>
+                                                        </div>
+                                                    @else
+                                                        <div>
+                                                            <x-dc.badge :color="$statusColors[$backup->status] ?? 'gray'">
+                                                                {{ $backup->status }}
+                                                            </x-dc.badge>
+                                                            @if($backup->error_message)
+                                                                <div class="text-xs text-red-600 mt-1">{{ \Illuminate\Support\Str::limit($backup->error_message, 80) }}</div>
+                                                            @endif
+                                                        </div>
+                                                    @endif
                                                 </td>
                                                 <td class="py-2 text-dc-secondary">
                                                     @if($backup->initiated_by === 'user' && $backup->user)
@@ -203,10 +260,11 @@
                                                             @foreach($backup->local_paths as $fmt => $path)
                                                                 @if(is_file($path))
                                                                     <a href="{{ route('admin.technical.backups.download', [$backup, 'fmt' => $fmt]) }}"
-                                                                       class="text-dc-primary hover:underline text-xs">↓{{ $fmt }}</a>
+                                                                       class="text-dc-primary hover:underline text-xs">&#8595;{{ $fmt }}</a>
                                                                 @endif
                                                             @endforeach
                                                         @endif
+                                                        @if(!$isActive)
                                                         <form method="POST"
                                                               action="{{ route('admin.technical.backups.destroy', $backup) }}"
                                                               onsubmit="return confirm('Удалить эту резервную копию?')">
@@ -217,6 +275,7 @@
                                                                 Удалить
                                                             </button>
                                                         </form>
+                                                        @endif
                                                     </div>
                                                 </td>
                                             </tr>
@@ -233,4 +292,63 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+    const stepLabelsMap = {
+        queued:        'В очереди',
+        pending:       'В очереди',
+        prepare:       'Подготовка',
+        db_dump:       'Дамп БД',
+        file_archive:  'Архивация файлов',
+        yandex_upload: 'Загрузка на Я.Диск',
+        finalize:      'Завершение',
+        done:          'Готово',
+        failed:        'Ошибка',
+    };
+
+    const statusLabelsMap = {
+        queued:  'В очереди',
+        pending: 'В очереди',
+        running: 'Выполняется',
+        done:    'Готово',
+        failed:  'Ошибка',
+    };
+
+    function backupPoller(backupId, statusUrl) {
+        return {
+            status:      'queued',
+            progress:    0,
+            stepLabel:   '',
+            statusLabel: '',
+            errorMsg:    '',
+            _timer:      null,
+
+            start() {
+                this._poll();
+            },
+
+            _poll() {
+                this._timer = setInterval(() => {
+                    fetch(statusUrl)
+                        .then(r => r.json())
+                        .then(data => {
+                            this.status      = data.status;
+                            this.progress    = data.progress_percent ?? this.progress;
+                            this.stepLabel   = stepLabelsMap[data.current_step] || (data.current_step || '');
+                            this.statusLabel = statusLabelsMap[data.status] || data.status;
+                            this.errorMsg    = data.error_message || '';
+
+                            if (data.status === 'done' || data.status === 'failed') {
+                                clearInterval(this._timer);
+                                setTimeout(() => location.reload(), 1500);
+                            }
+                        })
+                        .catch(() => {/* silent */});
+                }, 2000);
+            },
+        };
+    }
+    </script>
+    @endpush
 </x-app-layout>

@@ -4,8 +4,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Backup extends Model
 {
-    protected $fillable = ['type','file_preset','formats','local_paths','remote_paths','size_bytes','status','error_message','initiated_by','user_id'];
-    protected $casts = ['formats'=>'array','local_paths'=>'array','remote_paths'=>'array'];
+    protected $fillable = [
+        'type','file_preset','formats','local_paths','remote_paths',
+        'size_bytes','status','error_message','initiated_by','user_id',
+        'progress_percent','current_step','started_at','finished_at',
+    ];
+    protected $casts = [
+        'formats'          => 'array',
+        'local_paths'      => 'array',
+        'remote_paths'     => 'array',
+        'started_at'       => 'datetime',
+        'finished_at'      => 'datetime',
+    ];
     public function user() { return $this->belongsTo(User::class); }
     public function getFormattedSizeAttribute(): string {
         $bytes = $this->size_bytes;

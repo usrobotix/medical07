@@ -3,11 +3,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Console\Commands\BackupPruneCommand;
 use App\Http\Controllers\Controller;
+use App\Jobs\RunBackupJob;
 use App\Models\AuditEvent;
 use App\Models\Backup;
 use App\Services\YandexDiskService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
 
 class BackupController extends Controller
 {
@@ -15,41 +15,72 @@ class BackupController extends Controller
     {
         $backups = Backup::with('user')->orderBy('created_at', 'desc')->paginate(20);
         $yandexConfigured = (new YandexDiskService())->isConfigured();
-        return view('admin.technical.backups.index', compact('backups', 'yandexConfigured'));
+        $queueIsSync = config('queue.default') === 'sync';
+        return view('admin.technical.backups.index', compact('backups', 'yandexConfigured', 'queueIsSync'));
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'type'    => 'required|in:db,files,full',
-            'preset'  => 'nullable|in:project,storage_app',
-            'formats' => 'required|array|min:1',
-            'formats.*' => 'in:zip,tar_gz',
+            'type'          => 'required|in:db,files,full',
+            'preset'        => 'nullable|in:project,storage_app',
+            'formats'       => 'required|array|min:1',
+            'formats.*'     => 'in:zip,tar_gz',
             'upload_yandex' => 'nullable|boolean',
         ]);
 
-        $formats = implode(',', $data['formats']);
-        $preset  = $data['preset'] ?? 'project';
-        $yandex  = $request->boolean('upload_yandex', true) ? 1 : 0;
+        $preset        = $data['preset'] ?? 'project';
+        $uploadYandex  = $request->boolean('upload_yandex', true);
 
-        Artisan::call('backup:run', [
-            '--type'         => $data['type'],
-            '--preset'       => $preset,
-            '--formats'      => $formats,
-            '--yandex'       => $yandex,
-            '--initiated-by' => 'user',
-            '--user-id'      => auth()->id(),
+        $backup = Backup::create([
+            'type'         => $data['type'],
+            'file_preset'  => in_array($data['type'], ['files', 'full']) ? $preset : null,
+            'formats'      => $data['formats'],
+            'local_paths'  => null,
+            'remote_paths' => null,
+            'size_bytes'   => 0,
+            'status'       => 'queued',
+            'initiated_by' => 'user',
+            'user_id'      => auth()->id(),
+            'progress_percent' => 0,
+            'current_step'     => 'queued',
         ]);
 
+        AuditEvent::log(
+            'backup.queued',
+            [
+                'type'         => $data['type'],
+                'preset'       => $preset,
+                'formats'      => $data['formats'],
+                'initiated_by' => 'user',
+            ],
+            'backup',
+            $backup->id
+        );
+
+        RunBackupJob::dispatch($backup->id, $uploadYandex);
+
         return redirect()->route('admin.technical.backups.index')
-            ->with('success', 'Резервная копия создаётся. Обновите страницу через несколько секунд.');
+            ->with('success', 'Резервная копия поставлена в очередь. Статус обновится автоматически.');
+    }
+
+    public function status(Backup $backup)
+    {
+        return response()->json([
+            'id'               => $backup->id,
+            'status'           => $backup->status,
+            'progress_percent' => $backup->progress_percent,
+            'current_step'     => $backup->current_step,
+            'error_message'    => $backup->error_message,
+            'finished_at'      => $backup->finished_at?->toIso8601String(),
+        ]);
     }
 
     public function download(Request $request, Backup $backup)
     {
-        $fmt = $request->query('fmt', 'zip');
+        $fmt   = $request->query('fmt', 'zip');
         $paths = $backup->local_paths ?? [];
-        $path = $paths[$fmt] ?? $paths[array_key_first($paths)] ?? null;
+        $path  = $paths[$fmt] ?? $paths[array_key_first($paths)] ?? null;
 
         if (!$path || !is_file($path)) {
             abort(404, 'Файл не найден');
@@ -77,3 +108,4 @@ class BackupController extends Controller
         return response()->json($result);
     }
 }
+
