@@ -114,10 +114,14 @@ class BackupController extends Controller
      * Start a DB restore from an existing backup record.
      * Creates a restore tracking record and dispatches the async job.
      */
-    public function restore(Request $request, Backup $sourceBackup)
+    public function restore(Request $request, Backup $backup)
     {
-        // Only allow restoring DB or full backups that are done
-        if ($sourceBackup->status !== 'done' || !in_array($sourceBackup->type, ['db', 'full'])) {
+        // Only allow restoring done DB/full backups that are original backup records (not restore records)
+        if (
+            $backup->status !== 'done'
+            || !in_array($backup->type, ['db', 'full'])
+            || ($backup->kind ?? 'backup') !== 'backup'
+        ) {
             return redirect()->route('admin.technical.backups.index')
                 ->with('error', 'Восстановление возможно только для успешно завершённых резервных копий БД.');
         }
@@ -142,14 +146,14 @@ class BackupController extends Controller
         AuditEvent::log(
             'backup.restore_queued',
             [
-                'source_backup_id'  => $sourceBackup->id,
+                'source_backup_id'  => $backup->id,
                 'restore_record_id' => $restoreRecord->id,
             ],
             'backup',
-            $sourceBackup->id
+            $backup->id
         );
 
-        RestoreDatabaseFromBackupJob::dispatch($sourceBackup->id, $restoreRecord->id);
+        RestoreDatabaseFromBackupJob::dispatch($backup->id, $restoreRecord->id);
 
         return redirect()->route('admin.technical.backups.index')
             ->with('success', 'Восстановление БД поставлено в очередь. Следите за прогрессом в таблице ниже.');
