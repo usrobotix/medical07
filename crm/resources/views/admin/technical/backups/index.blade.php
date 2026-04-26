@@ -148,15 +148,19 @@
                                     @endif
                                 </p>
                             </div>
+							
                             <div x-data="{ result: null, loading: false }">
-                                <x-dc.button variant="contour" size="s"
-                                             @click="loading=true; fetch('{{ route(\'admin.technical.backups.test-yandex\') }}')
-                                                .then(r=>r.json())
-                                                .then(d=>{ result=d; loading=false; })
-                                                .catch(e=>{ result={ok:false,message:e.message}; loading=false; })">
-                                    <span x-show="!loading">Проверить соединение</span>
-                                    <span x-show="loading">Проверяем...</span>
-                                </x-dc.button>
+                                <x-dc.button
+    variant="contour"
+    size="s"
+    @click="loading=true; fetch('{{ route('admin.technical.backups.test-yandex') }}')
+        .then(r=>r.json())
+        .then(d=>{ result=d; loading=false; })
+        .catch(e=>{ result={ok:false,message:e.message}; loading=false; })"
+>
+    <span x-show="!loading">Проверить соединение</span>
+    <span x-show="loading">Проверяем...</span>
+</x-dc.button>
                                 <p x-show="result" class="mt-2 text-sm"
                                    :class="result?.ok ? 'text-green-600' : 'text-red-600'"
                                    x-text="result?.message"></p>
