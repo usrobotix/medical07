@@ -298,8 +298,8 @@
                     @if($rp->review_markdown)
                         <div>
                             <p class="text-ys-xs text-dc-secondary mb-2">Обзор клиники</p>
-                            <div class="text-ys-s text-dc bg-dc-subtle rounded p-3 overflow-auto max-h-96">
-                                <pre class="whitespace-pre-wrap font-sans">{{ $rp->review_markdown }}</pre>
+                            <div class="prose prose-sm max-w-none text-dc bg-dc-subtle rounded p-3 overflow-auto max-h-96">
+                                @markdown($rp->review_markdown)
                             </div>
                         </div>
                     @endif
