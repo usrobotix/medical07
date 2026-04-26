@@ -7,6 +7,7 @@ use App\Http\Controllers\Kb\CountryDirectionController as KbCountryDirectionCont
 use App\Http\Controllers\Kb\MessageTemplateController as KbMessageTemplateController;
 use App\Http\Controllers\Kb\NicheController as KbNicheController;
 use App\Http\Controllers\Kb\PartnerController as KbPartnerController;
+use App\Http\Controllers\Kb\PartnerResearchController as KbPartnerResearchController;
 use App\Http\Controllers\Kb\PartnerVerificationController as KbPartnerVerificationController;
 use App\Http\Controllers\Kb\VerificationChecklistController as KbVerificationChecklistController;
 use App\Http\Controllers\Kb\VerificationChecklistItemController as KbVerificationChecklistItemController;
@@ -72,6 +73,12 @@ Route::middleware('auth')->group(function () {
         Route::resource('partners', KbPartnerController::class)->except(['index', 'show']);
         Route::post('partners/{partner}/start-verification', [KbPartnerController::class, 'startVerification'])
             ->name('partners.start-verification');
+        Route::get('partners/{partner}/research/edit', [KbPartnerResearchController::class, 'edit'])
+            ->name('partners.research.edit')
+            ->whereNumber('partner');
+        Route::patch('partners/{partner}/research', [KbPartnerResearchController::class, 'update'])
+            ->name('partners.research.update')
+            ->whereNumber('partner');
 
         Route::resource('countries', KbCountryController::class)->except(['index', 'show']);
         Route::resource('niches', KbNicheController::class)->except(['index', 'show']);

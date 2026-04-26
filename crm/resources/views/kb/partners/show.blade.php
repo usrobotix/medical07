@@ -200,7 +200,14 @@
             @if($partner->researchProfile)
                 @php $rp = $partner->researchProfile; @endphp
                 <x-dc.card padding="lg" shadow="card">
-                    <h3 class="text-ys-m-s font-semibold text-dc mb-4">Research — данные исследования</h3>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-ys-m-s font-semibold text-dc">Research — данные исследования</h3>
+                        @auth
+                            @if(auth()->user()->hasAnyRole(['admin', 'manager']))
+                                <x-dc.button variant="contour" size="xs" href="{{ route('kb.partners.research.edit', $partner) }}">Редактировать research</x-dc.button>
+                            @endif
+                        @endauth
+                    </div>
 
                     <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 mb-4">
                         <div>
