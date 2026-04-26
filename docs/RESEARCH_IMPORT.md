@@ -159,7 +159,80 @@ php artisan migrate
 
 ## Как запустить импорт
 
-### На Windows / OpenServer (рекомендованный порядок)
+### На Windows / OpenServer — полный датасет (Вариант B1)
+
+Датасет содержит папки с `/` в именах (`Нейрохирургия / Ортопедия`), которые **нельзя создать в NTFS**.
+Для Windows используется специальная команда санитизации, которая копирует датасет с безопасными именами.
+
+#### Шаг 1: Получить датасет из `usrobotix/yandex-direct`
+
+**Вариант А (рекомендуется):** скачать ZIP-архив репозитория (не `git clone` — это важно!)
+
+```
+https://github.com/usrobotix/yandex-direct/archive/refs/heads/main.zip
+```
+
+1. Скачать и распаковать архив (например, в `C:\tmp\yandex-direct-main\`).
+2. Внутри архива найти папку `Research/`.
+
+**Вариант Б:** клонировать репозиторий **на Linux/macOS** (или WSL), а потом скопировать только содержимое `Research/`:
+
+```bash
+git clone https://github.com/usrobotix/yandex-direct.git /tmp/yd
+# Только потом копировать на Windows через сетевую папку или USB
+```
+
+> ⚠️ **Никогда не клонируйте `yandex-direct` напрямую на Windows через `git clone`** — папки
+> с `/` в именах вызовут ошибку `invalid path`.
+
+#### Шаг 2: Скопировать папку `Research/` в проект
+
+Скопируйте папку `Research/` (из архива или с Linux-машины) в:
+
+```
+C:\OSPanel\domains\medical07\crm\storage\app\research\Research\
+```
+
+После копирования структура должна выглядеть:
+
+```
+crm\storage\app\research\Research\
+  Германия\
+    Онкология\
+      Charité Comprehensive Cancer Center — Берлин\
+        clinic.yaml
+        review.md
+    Нейрохирургия / Ортопедия\   ← такое имя допустимо при копировании через Explorer
+      ...
+```
+
+> На Windows через Explorer (не через `git`) папки с `/` в именах создаются без проблем,
+> поскольку Explorer передаёт имена через Win32 API, а NTFS их поддерживает.
+> Проблема только при `git checkout` / `git clone`.
+
+#### Шаг 3: Создать Windows-безопасную копию (команда `research:sanitize-dataset`)
+
+```bat
+cd C:\OSPanel\domains\medical07\crm
+
+REM Посмотреть, что будет скопировано (без записи файлов)
+php artisan research:sanitize-dataset --dry-run
+
+REM Создать Windows-safe копию в storage/app/research/Research_win/
+php artisan research:sanitize-dataset
+```
+
+Команда заменяет `/` в именах папок на ` - `, удаляет другие Windows-небезопасные символы
+(`< > : " | ? *`) и копирует только `clinic.yaml` + `review.md`.
+
+Дополнительные опции:
+
+```bat
+REM Указать другой источник и/или назначение
+php artisan research:sanitize-dataset --source=C:\path\to\Research --dest=C:\path\to\Research_win
+```
+
+#### Шаг 4: Запустить импорт
 
 ```bat
 cd C:\OSPanel\domains\medical07\crm
@@ -176,14 +249,12 @@ php artisan research:import-partners --sample --dry-run
 REM 4. Импорт образца
 php artisan research:import-partners --sample
 
-REM 5. Импорт полного датасета (после ручного копирования Research/)
-php artisan research:import-partners --path=C:\OSPanel\domains\medical07\crm\storage\app\research
-```
+REM 5a. Импорт Windows-safe датасета (после шагов 1-3 выше)
+php artisan research:import-partners --path=storage\app\research\Research_win
 
-> **Важно**: папка `Research/` содержит имена директорий со слешем (`Нейрохирургия / Ортопедия`).
-> Такие имена допустимы в файловой системе Linux/macOS, но **не** в Windows NTFS.
-> **Никогда не пытайтесь клонировать или копировать `Research/` через `git`** на Windows —
-> используйте только ручное копирование (Explorer / xcopy).
+REM 5b. Или с полным путём
+php artisan research:import-partners --path=C:\OSPanel\domains\medical07\crm\storage\app\research\Research_win
+```
 
 ### На Linux / macOS
 
