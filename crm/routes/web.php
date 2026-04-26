@@ -3,7 +3,6 @@
 use App\Http\Controllers\CaseBoardController;
 use App\Http\Controllers\CaseStatusController;
 use App\Http\Controllers\Kb\CountryController as KbCountryController;
-use App\Http\Controllers\Kb\TechPageController as KbTechPageController;
 use App\Http\Controllers\Kb\CountryDirectionController as KbCountryDirectionController;
 use App\Http\Controllers\Kb\MessageTemplateController as KbMessageTemplateController;
 use App\Http\Controllers\Kb\NicheController as KbNicheController;
@@ -17,7 +16,13 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/__ping', fn () => 'pong from ' . base_path());
-
+Route::get('/__phpinfo', function () {
+    phpinfo();
+});
+Route::get('/__make_php_error', function () {
+    trigger_error('forced php error log creation', E_USER_WARNING);
+    return ini_get('error_log');
+});
 Route::get('/', fn () => view('welcome'));
 
 Route::get('/dashboard', fn () => view('dashboard'))
@@ -58,8 +63,6 @@ Route::middleware('auth')->group(function () {
 
     // KB write (admin/manager)
     Route::prefix('kb')->name('kb.')->middleware('role:admin|manager')->group(function () {
-        Route::get('tech', KbTechPageController::class)->name('tech');
-
         Route::resource('partners', KbPartnerController::class)->except(['index', 'show']);
         Route::post('partners/{partner}/start-verification', [KbPartnerController::class, 'startVerification'])
             ->name('partners.start-verification');
