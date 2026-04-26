@@ -134,7 +134,12 @@ class SanitizeResearchDataset extends Command
             // Strip leading/trailing dots and spaces
             $segment = trim($segment, ". \t\n\r\0\x0B");
 
-            return $segment === '' ? '_' : $segment;
+            if ($segment === '') {
+                $this->warn("  [warn] Empty segment after sanitization replaced with '_'");
+                return '_';
+            }
+
+            return $segment;
         }, $segments);
 
         return implode(DIRECTORY_SEPARATOR, $safe);

@@ -34,7 +34,7 @@ class PartnerResearchController extends Controller
 
         // Normalize empty strings to null for scalar fields
         foreach ($data as $key => $value) {
-            if ($value === '') {
+            if ($value === '' || $value === null) {
                 $data[$key] = null;
             }
         }
