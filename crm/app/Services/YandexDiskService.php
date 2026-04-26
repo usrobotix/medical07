@@ -79,7 +79,7 @@ class YandexDiskService
                 $current = rtrim($current, '/') . '/' . $part;
 
                 $resp = Http::withHeaders($this->headers())
-                    ->put($this->baseUrl . '/resources', ['path' => $current]);
+                    ->put($this->baseUrl . '/resources?path=' . urlencode($current));
 
                 // 201/409 are fine (created / already exists). Log other failures.
                 if (!$resp->successful() && $resp->status() !== 409) {
@@ -102,7 +102,7 @@ class YandexDiskService
             $current .= '/' . $part;
 
             $resp = Http::withHeaders($this->headers())
-                ->put($this->baseUrl . '/resources', ['path' => $current]);
+                ->put($this->baseUrl . '/resources?path=' . urlencode($current));
 
             if (!$resp->successful() && $resp->status() !== 409) {
                 Log::error('Yandex Disk ensureFolder (legacy) failed', [
@@ -168,6 +168,46 @@ class YandexDiskService
             return null;
         } catch (\Exception $e) {
             Log::error('Yandex Disk upload failed: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function download(string $remotePath): ?string
+    {
+        if (!$this->isConfigured()) return null;
+
+        try {
+            $resp = Http::withHeaders($this->headers())
+                ->get($this->baseUrl . '/resources/download', [
+                    'path' => $remotePath,
+                ]);
+
+            if (!$resp->successful()) {
+                Log::error('Yandex Disk download URL failed', [
+                    'status' => $resp->status(),
+                    'body'   => $resp->body(),
+                    'path'   => $remotePath,
+                ]);
+                return null;
+            }
+
+            $downloadUrl = $resp->json('href');
+            if (empty($downloadUrl)) {
+                Log::error('Yandex Disk download href missing', ['path' => $remotePath]);
+                return null;
+            }
+
+            $tmpPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'yadisk_' . uniqid() . '_' . basename($remotePath);
+
+            $fileResp = Http::timeout(600)->sink($tmpPath)->get($downloadUrl);
+            if (!$fileResp->successful()) {
+                Log::error('Yandex Disk file GET failed', ['status' => $fileResp->status()]);
+                return null;
+            }
+
+            return $tmpPath;
+        } catch (\Exception $e) {
+            Log::error('Yandex Disk download exception: ' . $e->getMessage());
             return null;
         }
     }

@@ -206,8 +206,12 @@
                                                     {{ $backup->created_at->timezone(config('app.timezone'))->format('d.m.Y H:i') }}
                                                 </td>
                                                 <td class="py-2 text-dc">
-                                                    @php $typeLabels = ['db'=>'БД','files'=>'Файлы','full'=>'Полная']; @endphp
-                                                    {{ $typeLabels[$backup->type] ?? $backup->type }}
+                                                    @php
+                                                        $typeLabels = ['db'=>'БД','files'=>'Файлы','full'=>'Полная'];
+                                                        $kindLabels = ['backup'=>'', 'restore'=>' (Восстановление)', 'safety_snapshot'=>' (Снимок)'];
+                                                        $kindLabel  = $kindLabels[$backup->kind ?? 'backup'] ?? '';
+                                                    @endphp
+                                                    {{ ($typeLabels[$backup->type] ?? $backup->type) . $kindLabel }}
                                                 </td>
                                                 <td class="py-2 text-dc-secondary">{{ $backup->file_preset ?? '—' }}</td>
                                                 <td class="py-2 text-dc-secondary">{{ implode(', ', $backup->formats ?? []) }}</td>
@@ -258,8 +262,8 @@
                                                         cron
                                                     @endif
                                                 </td>
-                                                <td class="py-2">
-                                                    <div class="flex items-center gap-2">
+                                                 <td class="py-2">
+                                                    <div class="flex items-center gap-2 flex-wrap">
                                                         @if($backup->status === 'done' && !empty($backup->local_paths))
                                                             @foreach($backup->local_paths as $fmt => $path)
                                                                 @if(is_file($path))
@@ -268,6 +272,66 @@
                                                                 @endif
                                                             @endforeach
                                                         @endif
+
+                                                        {{-- Restore button: only for done db/full backups of kind=backup --}}
+                                                        @if($backup->status === 'done'
+                                                            && in_array($backup->type, ['db', 'full'])
+                                                            && ($backup->kind ?? 'backup') === 'backup')
+                                                            <div x-data="restoreModal({{ $backup->id }}, '{{ route('admin.technical.backups.restore', $backup) }}')">
+                                                                <button type="button"
+                                                                        @click="open = true"
+                                                                        class="text-orange-600 hover:text-orange-800 text-xs dc-transition font-medium">
+                                                                    &#9888; Восстановить БД
+                                                                </button>
+
+                                                                {{-- Confirmation modal --}}
+                                                                <div x-show="open" x-cloak
+                                                                     class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+                                                                     @keydown.escape.window="open = false">
+                                                                    <div class="bg-surface rounded-lg shadow-xl max-w-md w-full mx-4 p-6"
+                                                                         @click.outside="open = false">
+                                                                        <h3 class="text-lg font-semibold text-dc mb-2">&#9888; Восстановление БД</h3>
+                                                                        <p class="text-sm text-dc-secondary mb-3">
+                                                                            Будет восстановлена резервная копия
+                                                                            <strong>{{ $backup->created_at->timezone(config('app.timezone'))->format('d.m.Y H:i') }}</strong>
+                                                                            ({{ $backup->type }}).
+                                                                        </p>
+                                                                        <p class="text-sm text-red-600 mb-4">
+                                                                            Перед восстановлением автоматически создаётся снимок текущей БД.
+                                                                            Тем не менее, текущие данные будут <strong>перезаписаны</strong>.
+                                                                        </p>
+                                                                        @if($queueIsSync)
+                                                                            <div class="mb-4 p-3 bg-yellow-50 border border-yellow-300 text-yellow-800 rounded text-xs">
+                                                                                <strong>&#9888; Очередь не настроена (sync)</strong> — восстановление выполнится синхронно и может превысить timeout.<br>
+                                                                                Рекомендуется: установить <code>QUEUE_CONNECTION=database</code> и запустить <code>php artisan queue:work --tries=1</code>.
+                                                                            </div>
+                                                                        @endif
+                                                                        <label class="flex items-start gap-2 mb-4 cursor-pointer">
+                                                                            <input type="checkbox" x-model="confirmed" class="mt-0.5">
+                                                                            <span class="text-sm text-dc">Я понимаю, что текущая БД будет перезаписана</span>
+                                                                        </label>
+                                                                        <div class="flex gap-3 justify-end">
+                                                                            <button type="button" @click="open = false"
+                                                                                    class="px-4 py-2 text-sm text-dc-secondary hover:text-dc dc-transition">
+                                                                                Отмена
+                                                                            </button>
+                                                                            <form :action="url" method="POST">
+                                                                                @csrf
+                                                                                <input type="hidden" name="confirmed" value="1">
+                                                                                <button type="submit"
+                                                                                        :disabled="!confirmed"
+                                                                                        class="px-4 py-2 text-sm font-medium rounded bg-red-600 text-white
+                                                                                               disabled:opacity-40 disabled:cursor-not-allowed
+                                                                                               hover:bg-red-700 dc-transition">
+                                                                                    Восстановить
+                                                                                </button>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        @endif
+
                                                         @if(!$isActive)
                                                         <form method="POST"
                                                               action="{{ route('admin.technical.backups.destroy', $backup) }}"
@@ -309,6 +373,11 @@
         finalize:      'Завершение',
         done:          'Готово',
         failed:        'Ошибка',
+        // restore steps
+        snapshot:      'Снимок безопасности',
+        download:      'Загрузка архива',
+        extract:       'Извлечение дампа',
+        restore_db:    'Восстановление БД',
     };
 
     const statusLabelsMap = {
@@ -351,6 +420,15 @@
                         .catch(() => {/* silent */});
                 }, 2000);
             },
+        };
+    }
+
+    function restoreModal(backupId, url) {
+        return {
+            open:      false,
+            confirmed: false,
+            backupId:  backupId,
+            url:       url,
         };
     }
     </script>
