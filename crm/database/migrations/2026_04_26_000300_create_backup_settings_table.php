@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->string('schedule_time')->default('03:00'); // HH:MM
             $table->string('backup_type')->default('full'); // db, files, full
             $table->string('file_preset')->default('project'); // project, storage_app
-            $table->json('formats')->default('["zip","tar_gz"]');
+            $table->json('formats')->nullable();
             $table->boolean('upload_yandex')->default(true);
             $table->timestamps();
         });
