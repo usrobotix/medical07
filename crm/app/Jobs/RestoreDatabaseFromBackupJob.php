@@ -191,18 +191,19 @@ class RestoreDatabaseFromBackupJob implements ShouldQueue
         fwrite($handle, "SET FOREIGN_KEY_CHECKS=0;\n");
         fwrite($handle, "SET SQL_MODE='NO_AUTO_VALUE_ON_ZERO';\n\n");
 
-        $tables = $pdo->query("SHOW TABLES FROM `{$dbName}`")->fetchAll(\PDO::FETCH_COLUMN);
+        $tables = $pdo->query("SHOW TABLES FROM `" . $this->escapeIdentifier($dbName) . "`")->fetchAll(\PDO::FETCH_COLUMN);
 
         foreach ($tables as $table) {
-            $createRow = $pdo->query("SHOW CREATE TABLE `{$table}`")->fetch(\PDO::FETCH_NUM);
-            fwrite($handle, "\n-- Table: `{$table}`\n");
-            fwrite($handle, "DROP TABLE IF EXISTS `{$table}`;\n");
+            $safeTable = $this->escapeIdentifier($table);
+            $createRow = $pdo->query("SHOW CREATE TABLE `{$safeTable}`")->fetch(\PDO::FETCH_NUM);
+            fwrite($handle, "\n-- Table: `{$safeTable}`\n");
+            fwrite($handle, "DROP TABLE IF EXISTS `{$safeTable}`;\n");
             fwrite($handle, $createRow[1] . ";\n\n");
 
-            $rows = $pdo->query("SELECT * FROM `{$table}`")->fetchAll(\PDO::FETCH_ASSOC);
+            $rows = $pdo->query("SELECT * FROM `{$safeTable}`")->fetchAll(\PDO::FETCH_ASSOC);
             if (!empty($rows)) {
-                $columns = array_map(fn ($c) => "`{$c}`", array_keys($rows[0]));
-                fwrite($handle, "INSERT INTO `{$table}` (" . implode(', ', $columns) . ") VALUES\n");
+                $columns = array_map(fn ($c) => '`' . $this->escapeIdentifier($c) . '`', array_keys($rows[0]));
+                fwrite($handle, "INSERT INTO `{$safeTable}` (" . implode(', ', $columns) . ") VALUES\n");
                 $rowValues = [];
                 foreach ($rows as $row) {
                     $escaped = array_map(function ($v) use ($pdo) {
@@ -217,6 +218,15 @@ class RestoreDatabaseFromBackupJob implements ShouldQueue
 
         fwrite($handle, "SET FOREIGN_KEY_CHECKS=1;\n");
         fclose($handle);
+    }
+
+    /**
+     * Escape a MySQL identifier (table/column/database name) for use inside backtick-quoting.
+     * Backticks inside names are doubled per MySQL rules.
+     */
+    private function escapeIdentifier(string $name): string
+    {
+        return str_replace('`', '``', $name);
     }
 
     private function archiveSqlToZip(string $sqlPath, string $outDir, string $baseName): string
@@ -291,10 +301,19 @@ class RestoreDatabaseFromBackupJob implements ShouldQueue
         }
 
         if (str_ends_with($archivePath, '.tar.gz') || str_ends_with($archivePath, '.tgz')) {
-            // PharData: decompress .tar.gz → .tar, then extract
-            $phar   = new PharData($archivePath);
-            $tarObj = $phar->decompress(); // creates .tar next to source file
-            $tarObj->extractTo($tmpDir);
+            // PharData: decompress .tar.gz → .tar next to the source, then extract
+            $phar    = new PharData($archivePath);
+            $tarObj  = $phar->decompress();
+            $tarPath = $tarObj->getPath(); // track path for cleanup
+
+            try {
+                $tarObj->extractTo($tmpDir);
+            } finally {
+                // Always clean up the intermediate .tar file
+                if ($tarPath && is_file($tarPath)) {
+                    @unlink($tarPath);
+                }
+            }
 
             // Find .sql inside extracted dir
             $it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($tmpDir));
