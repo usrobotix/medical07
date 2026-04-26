@@ -79,7 +79,7 @@ class YandexDiskService
                 $current = rtrim($current, '/') . '/' . $part;
 
                 $resp = Http::withHeaders($this->headers())
-                    ->put($this->baseUrl . '/resources?path=' . urlencode($current));
+                    ->send('PUT', $this->baseUrl . '/resources?path=' . urlencode($current));
 
                 // 201/409 are fine (created / already exists). Log other failures.
                 if (!$resp->successful() && $resp->status() !== 409) {
@@ -102,7 +102,7 @@ class YandexDiskService
             $current .= '/' . $part;
 
             $resp = Http::withHeaders($this->headers())
-                ->put($this->baseUrl . '/resources?path=' . urlencode($current));
+                ->send('PUT', $this->baseUrl . '/resources?path=' . urlencode($current));
 
             if (!$resp->successful() && $resp->status() !== 409) {
                 Log::error('Yandex Disk ensureFolder (legacy) failed', [
