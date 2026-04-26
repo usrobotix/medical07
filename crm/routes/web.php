@@ -15,14 +15,6 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/__ping', fn () => 'pong from ' . base_path());
-Route::get('/__phpinfo', function () {
-    phpinfo();
-});
-Route::get('/__make_php_error', function () {
-    trigger_error('forced php error log creation', E_USER_WARNING);
-    return ini_get('error_log');
-});
 Route::get('/', fn () => view('welcome'));
 
 Route::get('/dashboard', fn () => view('dashboard'))
@@ -46,15 +38,29 @@ Route::middleware('auth')->group(function () {
     Route::resource('cases', MedicalCaseController::class)->only(['index', 'create', 'store']);
 
     // KB read (any authenticated)
+    // IMPORTANT: ->whereNumber() on every resource prevents /create, /edit, etc.
+    // from being matched by the {id} show route (which is registered first).
     Route::prefix('kb')->name('kb.')->group(function () {
-        Route::resource('partners', KbPartnerController::class)->only(['index', 'show']);
-        Route::resource('countries', KbCountryController::class)->only(['index', 'show']);
-        Route::resource('niches', KbNicheController::class)->only(['index', 'show']);
-        Route::resource('country-directions', KbCountryDirectionController::class)->only(['index', 'show']);
-        Route::resource('verification-checklists', KbVerificationChecklistController::class)->only(['index', 'show']);
-        Route::resource('message-templates', KbMessageTemplateController::class)->only(['index', 'show']);
+        Route::resource('partners', KbPartnerController::class)
+            ->only(['index', 'show'])
+            ->whereNumber('partner');
+        Route::resource('countries', KbCountryController::class)
+            ->only(['index', 'show'])
+            ->whereNumber('country');
+        Route::resource('niches', KbNicheController::class)
+            ->only(['index', 'show'])
+            ->whereNumber('niche');
+        Route::resource('country-directions', KbCountryDirectionController::class)
+            ->only(['index', 'show'])
+            ->whereNumber('country_direction');
+        Route::resource('verification-checklists', KbVerificationChecklistController::class)
+            ->only(['index', 'show'])
+            ->whereNumber('verification_checklist');
+        Route::resource('message-templates', KbMessageTemplateController::class)
+            ->only(['index', 'show'])
+            ->whereNumber('message_template');
 
-        // IMPORTANT: keep resource parameter consistent + restrict to numbers (prevents /create being treated as an ID)
+        // keep resource parameter consistent + restrict to numbers
         Route::resource('partner-verifications', KbPartnerVerificationController::class)
             ->only(['index', 'show'])
             ->parameters(['partner-verifications' => 'partnerVerification'])

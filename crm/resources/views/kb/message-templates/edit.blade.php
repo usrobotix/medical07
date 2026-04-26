@@ -8,7 +8,7 @@
 
     <div class="py-8">
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <form method="POST" action="{{ route('kb.message-templates.update', $messageTemplate) }}">
+            <form id="form-update-message-template" method="POST" action="{{ route('kb.message-templates.update', $messageTemplate) }}">
                 @csrf
                 @method('PATCH')
                 <x-dc.card padding="lg" shadow="card">
@@ -53,20 +53,20 @@
                             <textarea name="body" rows="8" required class="block w-full p-3 text-ys-s rounded-2xs border border-dc-gray-30 bg-surface text-dc dc-transition focus:outline-none focus-visible:ring-2 focus-visible:ring-dc-yellow-100 font-mono">{{ old('body', $messageTemplate->body) }}</textarea>
                             @error('body')<p class="text-dc-red-100 text-ys-xs mt-1">{{ $message }}</p>@enderror
                         </div>
-                        <div class="flex justify-between items-center pt-2">
-                            <form method="POST" action="{{ route('kb.message-templates.destroy', $messageTemplate) }}" onsubmit="return confirm('Удалить шаблон?')">
-                                @csrf
-                                @method('DELETE')
-                                <x-dc.button type="submit" variant="danger" size="s">Удалить</x-dc.button>
-                            </form>
-                            <div class="flex gap-3">
-                                <x-dc.button variant="contour" size="s" href="{{ route('kb.message-templates.show', $messageTemplate) }}">Отмена</x-dc.button>
-                                <x-dc.button type="submit" variant="action" size="s">Сохранить</x-dc.button>
-                            </div>
-                        </div>
                     </div>
                 </x-dc.card>
             </form>
+            <div class="flex justify-between items-center pt-4">
+                <form method="POST" action="{{ route('kb.message-templates.destroy', $messageTemplate) }}" onsubmit="return confirm('Удалить шаблон?')">
+                    @csrf
+                    @method('DELETE')
+                    <x-dc.button type="submit" variant="danger" size="s">Удалить</x-dc.button>
+                </form>
+                <div class="flex gap-3">
+                    <x-dc.button variant="contour" size="s" href="{{ route('kb.message-templates.show', $messageTemplate) }}">Отмена</x-dc.button>
+                    <x-dc.button form="form-update-message-template" type="submit" variant="action" size="s">Сохранить</x-dc.button>
+                </div>
+            </div>
         </div>
     </div>
 </x-app-layout>
