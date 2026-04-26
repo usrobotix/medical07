@@ -222,14 +222,16 @@
                             <dt class="text-ys-xs text-dc-secondary">Адрес</dt>
                             <dd class="text-ys-s text-dc mt-0.5">{{ $rp->address ?? '—' }}</dd>
                         </div>
-                        @if($rp->international_page_url)
-                            <div class="sm:col-span-2">
-                                <dt class="text-ys-xs text-dc-secondary">Страница для иностранных пациентов</dt>
-                                <dd class="text-ys-s mt-0.5">
+                        <div class="sm:col-span-2">
+                            <dt class="text-ys-xs text-dc-secondary">Страница для иностранных пациентов</dt>
+                            <dd class="text-ys-s mt-0.5">
+                                @if($rp->international_page_url)
                                     <a href="{{ $rp->international_page_url }}" target="_blank" rel="noopener noreferrer" class="text-dc-primary hover:underline dc-transition break-all">{{ $rp->international_page_url }}</a>
-                                </dd>
-                            </div>
-                        @endif
+                                @else
+                                    <span class="text-dc">—</span>
+                                @endif
+                            </dd>
+                        </div>
                         <div>
                             <dt class="text-ys-xs text-dc-secondary">Приём иностранцев</dt>
                             <dd class="text-ys-s text-dc mt-0.5">
@@ -248,10 +250,18 @@
                                 @endif
                             </dd>
                         </div>
-                        @if($rp->working_hours)
-                            <div class="sm:col-span-2">
-                                <dt class="text-ys-xs text-dc-secondary">Режим работы</dt>
-                                <dd class="text-ys-s text-dc mt-0.5">{{ $rp->working_hours }}</dd>
+                        <div class="sm:col-span-2">
+                            <dt class="text-ys-xs text-dc-secondary">Режим работы</dt>
+                            <dd class="text-ys-s text-dc mt-0.5">{{ $rp->working_hours ?? '—' }}</dd>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <dt class="text-ys-xs text-dc-secondary">Путь к источнику (source_path)</dt>
+                            <dd class="text-ys-s text-dc mt-0.5 break-all">{{ $rp->source_path ?? '—' }}</dd>
+                        </div>
+                        @if($rp->imported_at)
+                            <div>
+                                <dt class="text-ys-xs text-dc-secondary">Дата импорта</dt>
+                                <dd class="text-ys-s text-dc mt-0.5">{{ $rp->imported_at->format('d.m.Y H:i') }}</dd>
                             </div>
                         @endif
                     </dl>
@@ -267,48 +277,36 @@
                         </div>
                     @endif
 
+                    @if($rp->doctors && count($rp->doctors) > 0)
+                        @include('kb.partners._research_items_list', ['items' => $rp->doctors, 'title' => 'Врачи'])
+                    @endif
+
+                    @if($rp->prices && count($rp->prices) > 0)
+                        @include('kb.partners._research_items_list', ['items' => $rp->prices, 'title' => 'Цены'])
+                    @endif
+
+                    @if($rp->reviews && count($rp->reviews) > 0)
+                        @include('kb.partners._research_items_list', ['items' => $rp->reviews, 'title' => 'Отзывы'])
+                    @endif
+
                     @if($rp->sources && count($rp->sources) > 0)
-                        <div class="mb-4">
-                            <p class="text-ys-xs text-dc-secondary mb-1">Источники</p>
-                            <ul class="text-ys-s space-y-1">
-                                @foreach($rp->sources as $source)
-                                    @php
-                                        // Source can be a string URL or an object {url, описание, дата_проверки}
-                                        if (is_string($source)) {
-                                            $srcUrl  = $source;
-                                            $srcDesc = null;
-                                            $srcDate = null;
-                                        } else {
-                                            $srcUrl  = $source['url'] ?? null;
-                                            $srcDesc = $source['описание'] ?? ($source['description'] ?? null);
-                                            $srcDate = $source['дата_проверки'] ?? ($source['date'] ?? null);
-                                        }
-                                    @endphp
-                                    <li class="text-dc">
-                                        @if($srcUrl && str_starts_with($srcUrl, 'http'))
-                                            <a href="{{ $srcUrl }}" target="_blank" rel="noopener noreferrer" class="text-dc-primary hover:underline dc-transition break-all">{{ $srcUrl }}</a>
-                                        @else
-                                            <span>{{ $srcUrl ?? '—' }}</span>
-                                        @endif
-                                        @if($srcDesc)
-                                            <span class="text-dc-secondary"> — {{ $srcDesc }}</span>
-                                        @endif
-                                        @if($srcDate)
-                                            <span class="text-dc-secondary text-ys-xs"> ({{ $srcDate }})</span>
-                                        @endif
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
+                        @include('kb.partners._research_items_list', ['items' => $rp->sources, 'title' => 'Источники'])
                     @endif
 
                     @if($rp->review_markdown)
-                        <div>
+                        <div class="mb-4">
                             <p class="text-ys-xs text-dc-secondary mb-2">Обзор клиники</p>
                             <div class="prose prose-sm max-w-none text-dc bg-dc-subtle rounded p-3 overflow-auto max-h-96">
                                 @markdown($rp->review_markdown)
                             </div>
                         </div>
+                    @endif
+
+                    @if($rp->raw_clinic_yaml)
+                        <details class="mt-2">
+                            <summary class="text-ys-xs text-dc-secondary cursor-pointer hover:text-dc dc-transition select-none">Исходный YAML (raw_clinic_yaml)</summary>
+                            <pre class="mt-2 p-3 text-ys-xs font-mono bg-dc-subtle rounded overflow-auto max-h-80 text-dc whitespace-pre-wrap break-all">{{ $rp->raw_clinic_yaml }}</pre>
+                        </details>
                     @endif
                 </x-dc.card>
             @endif
