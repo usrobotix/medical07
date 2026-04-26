@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 class Backup extends Model
 {
     protected $fillable = [
-        'type','file_preset','formats','local_paths','remote_paths',
+        'type','kind','file_preset','formats','local_paths','remote_paths',
         'size_bytes','status','error_message','initiated_by','user_id',
         'progress_percent','current_step','started_at','finished_at',
     ];

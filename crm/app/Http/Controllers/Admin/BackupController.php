@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Console\Commands\BackupPruneCommand;
 use App\Http\Controllers\Controller;
+use App\Jobs\RestoreDatabaseFromBackupJob;
 use App\Jobs\RunBackupJob;
 use App\Models\AuditEvent;
 use App\Models\Backup;
@@ -34,6 +35,7 @@ class BackupController extends Controller
 
         $backup = Backup::create([
             'type'         => $data['type'],
+            'kind'         => 'backup',
             'file_preset'  => in_array($data['type'], ['files', 'full']) ? $preset : null,
             'formats'      => $data['formats'],
             'local_paths'  => null,
@@ -106,6 +108,51 @@ class BackupController extends Controller
     {
         $result = (new YandexDiskService())->testConnection();
         return response()->json($result);
+    }
+
+    /**
+     * Start a DB restore from an existing backup record.
+     * Creates a restore tracking record and dispatches the async job.
+     */
+    public function restore(Request $request, Backup $sourceBackup)
+    {
+        // Only allow restoring DB or full backups that are done
+        if ($sourceBackup->status !== 'done' || !in_array($sourceBackup->type, ['db', 'full'])) {
+            return redirect()->route('admin.technical.backups.index')
+                ->with('error', 'Восстановление возможно только для успешно завершённых резервных копий БД.');
+        }
+
+        if ($request->input('confirmed') !== '1') {
+            return redirect()->route('admin.technical.backups.index')
+                ->with('error', 'Необходимо подтвердить восстановление.');
+        }
+
+        $restoreRecord = Backup::create([
+            'type'             => 'db',
+            'kind'             => 'restore',
+            'formats'          => ['zip'],
+            'status'           => 'queued',
+            'initiated_by'     => 'user',
+            'user_id'          => auth()->id(),
+            'progress_percent' => 0,
+            'current_step'     => 'queued',
+            'size_bytes'       => 0,
+        ]);
+
+        AuditEvent::log(
+            'backup.restore_queued',
+            [
+                'source_backup_id'  => $sourceBackup->id,
+                'restore_record_id' => $restoreRecord->id,
+            ],
+            'backup',
+            $sourceBackup->id
+        );
+
+        RestoreDatabaseFromBackupJob::dispatch($sourceBackup->id, $restoreRecord->id);
+
+        return redirect()->route('admin.technical.backups.index')
+            ->with('success', 'Восстановление БД поставлено в очередь. Следите за прогрессом в таблице ниже.');
     }
 }
 

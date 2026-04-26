@@ -113,6 +113,7 @@ Route::prefix('admin/technical')->name('admin.technical.')->middleware(['auth', 
     Route::get('/backups/test-yandex', [\App\Http\Controllers\Admin\BackupController::class, 'testYandex'])->name('backups.test-yandex');
     Route::get('/backups/{backup}/status', [\App\Http\Controllers\Admin\BackupController::class, 'status'])->name('backups.status');
     Route::get('/backups/{backup}/download', [\App\Http\Controllers\Admin\BackupController::class, 'download'])->name('backups.download');
+    Route::post('/backups/{backup}/restore', [\App\Http\Controllers\Admin\BackupController::class, 'restore'])->name('backups.restore');
     Route::delete('/backups/{backup}', [\App\Http\Controllers\Admin\BackupController::class, 'destroy'])->name('backups.destroy');
 
     Route::get('/schedule', [\App\Http\Controllers\Admin\ScheduleController::class, 'index'])->name('schedule.index');
