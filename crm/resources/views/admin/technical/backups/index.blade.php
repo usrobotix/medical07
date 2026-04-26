@@ -194,7 +194,7 @@
                                                     @if($backup->initiated_by === 'user' && $backup->user)
                                                         {{ $backup->user->name }}
                                                     @else
-                                                        Cron
+                                                        cron
                                                     @endif
                                                 </td>
                                                 <td class="py-2">
