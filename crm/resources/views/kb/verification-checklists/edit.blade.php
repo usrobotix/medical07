@@ -9,7 +9,7 @@
     <div class="py-8">
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <form method="POST" action="{{ route('kb.verification-checklists.update', $verificationChecklist) }}">
+            <form id="form-update-checklist" method="POST" action="{{ route('kb.verification-checklists.update', $verificationChecklist) }}">
                 @csrf
                 @method('PATCH')
                 <x-dc.card padding="lg" shadow="card">
@@ -36,17 +36,17 @@
                             <label class="block text-ys-xs font-medium text-dc-secondary mb-1">Порядок сортировки</label>
                             <input type="number" name="sort_order" value="{{ old('sort_order', $verificationChecklist->sort_order) }}" class="block w-full h-9 px-4 text-ys-s rounded-2xs border border-dc-gray-30 bg-surface text-dc dc-transition focus:outline-none focus-visible:ring-2 focus-visible:ring-dc-yellow-100">
                         </div>
-                        <div class="flex justify-between items-center pt-2">
-                            <form method="POST" action="{{ route('kb.verification-checklists.destroy', $verificationChecklist) }}" onsubmit="return confirm('Удалить чек-лист? Все пункты будут удалены.')">
-                                @csrf
-                                @method('DELETE')
-                                <x-dc.button type="submit" variant="danger" size="s">Удалить чек-лист</x-dc.button>
-                            </form>
-                            <x-dc.button type="submit" variant="action" size="s">Сохранить</x-dc.button>
-                        </div>
                     </div>
                 </x-dc.card>
             </form>
+            <div class="flex justify-between items-center pt-4">
+                <form method="POST" action="{{ route('kb.verification-checklists.destroy', $verificationChecklist) }}" onsubmit="return confirm('Удалить чек-лист? Все пункты будут удалены.')">
+                    @csrf
+                    @method('DELETE')
+                    <x-dc.button type="submit" variant="danger" size="s">Удалить чек-лист</x-dc.button>
+                </form>
+                <x-dc.button form="form-update-checklist" type="submit" variant="action" size="s">Сохранить</x-dc.button>
+            </div>
 
             <x-dc.card padding="lg" shadow="card">
                 <h3 class="text-ys-s font-semibold text-dc mb-4">Пункты чек-листа ({{ $verificationChecklist->items->count() }})</h3>

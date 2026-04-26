@@ -8,7 +8,7 @@
 
     <div class="py-8">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <form method="POST" action="{{ route('kb.partners.update', $partner) }}" class="space-y-6">
+            <form id="form-update-partner" method="POST" action="{{ route('kb.partners.update', $partner) }}" class="space-y-6">
                 @csrf
                 @method('PATCH')
 
@@ -146,18 +146,18 @@
                     <textarea name="notes" rows="4" class="block w-full p-3 text-ys-s rounded-2xs border border-dc-gray-30 bg-surface text-dc dc-transition focus:outline-none focus-visible:ring-2 focus-visible:ring-dc-yellow-100">{{ old('notes', $partner->notes) }}</textarea>
                 </x-dc.card>
 
-                <div class="flex justify-between items-center">
-                    <form method="POST" action="{{ route('kb.partners.destroy', $partner) }}" onsubmit="return confirm('Удалить партнёра?')">
-                        @csrf
-                        @method('DELETE')
-                        <x-dc.button type="submit" variant="danger" size="s">Удалить</x-dc.button>
-                    </form>
-                    <div class="flex gap-3">
-                        <x-dc.button variant="contour" size="s" href="{{ route('kb.partners.show', $partner) }}">Отмена</x-dc.button>
-                        <x-dc.button type="submit" variant="action" size="s">Сохранить</x-dc.button>
-                    </div>
-                </div>
             </form>
+            <div class="flex justify-between items-center">
+                <form method="POST" action="{{ route('kb.partners.destroy', $partner) }}" onsubmit="return confirm('Удалить партнёра?')">
+                    @csrf
+                    @method('DELETE')
+                    <x-dc.button type="submit" variant="danger" size="s">Удалить</x-dc.button>
+                </form>
+                <div class="flex gap-3">
+                    <x-dc.button variant="contour" size="s" href="{{ route('kb.partners.show', $partner) }}">Отмена</x-dc.button>
+                    <x-dc.button form="form-update-partner" type="submit" variant="action" size="s">Сохранить</x-dc.button>
+                </div>
+            </div>
         </div>
     </div>
 </x-app-layout>
