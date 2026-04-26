@@ -22,6 +22,9 @@ class RestoreDatabaseFromBackupJob implements ShouldQueue
     public int $timeout = 3600;
     public int $tries = 1;
 
+    /** Read buffer size for streaming the SQL file line-by-line (bytes). */
+    private const SQL_READ_BUFFER = 8192;
+
     public function __construct(
         public readonly int $sourceBackupId,
         public readonly int $restoreRecordId,
@@ -203,16 +206,15 @@ class RestoreDatabaseFromBackupJob implements ShouldQueue
             $rows = $pdo->query("SELECT * FROM `{$safeTable}`")->fetchAll(\PDO::FETCH_ASSOC);
             if (!empty($rows)) {
                 $columns = array_map(fn ($c) => '`' . $this->escapeIdentifier($c) . '`', array_keys($rows[0]));
-                fwrite($handle, "INSERT INTO `{$safeTable}` (" . implode(', ', $columns) . ") VALUES\n");
-                $rowValues = [];
+                // Write each row as a separate INSERT to avoid extremely large statements.
                 foreach ($rows as $row) {
                     $escaped = array_map(function ($v) use ($pdo) {
                         if ($v === null) return 'NULL';
                         return $pdo->quote($v);
                     }, $row);
-                    $rowValues[] = '(' . implode(', ', $escaped) . ')';
+                    fwrite($handle, "INSERT INTO `{$safeTable}` (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $escaped) . ");\n");
                 }
-                fwrite($handle, implode(",\n", $rowValues) . ";\n\n");
+                fwrite($handle, "\n");
             }
         }
 
@@ -353,7 +355,7 @@ class RestoreDatabaseFromBackupJob implements ShouldQueue
         $lastProgressPct = 35;
 
         while (!feof($handle)) {
-            $line = fgets($handle, 8192);
+            $line = fgets($handle, self::SQL_READ_BUFFER);
             if ($line === false) break;
 
             $bytesRead += strlen($line);
