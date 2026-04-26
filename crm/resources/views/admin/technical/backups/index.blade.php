@@ -8,12 +8,12 @@
     <div class="py-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {{-- Flash messages --}}
         @if(session('success'))
-            <div class="mb-4 p-4 bg-green-50 border border-green-200 text-green-800 rounded-md">
+            <div class="mb-4 p-4 bg-dc-green-20 border border-dc-green-100 text-dc-green-100 rounded-2xs text-ys-s">
                 {{ session('success') }}
             </div>
         @endif
         @if(session('error'))
-            <div class="mb-4 p-4 bg-red-50 border border-red-200 text-red-800 rounded-md">
+            <div class="mb-4 p-4 bg-dc-red-20 border border-dc-red-100 text-dc-red-100 rounded-2xs text-ys-s">
                 {{ session('error') }}
             </div>
         @endif
