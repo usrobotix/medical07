@@ -16,13 +16,21 @@ class Kernel extends ConsoleKernel
             $settings = \App\Models\BackupSetting::instance();
             if (!$settings->enabled) return;
 
-            \Illuminate\Support\Facades\Artisan::call('backup:run', [
-                '--type'         => $settings->backup_type,
-                '--preset'       => $settings->file_preset,
-                '--formats'      => implode(',', $settings->formats ?? ['zip', 'tar_gz']),
-                '--yandex'       => $settings->upload_yandex ? 1 : 0,
-                '--initiated-by' => 'cron',
+            $backup = \App\Models\Backup::create([
+                'type'             => $settings->backup_type,
+                'file_preset'      => in_array($settings->backup_type, ['files', 'full']) ? $settings->file_preset : null,
+                'formats'          => $settings->formats ?? ['zip', 'tar_gz'],
+                'local_paths'      => null,
+                'remote_paths'     => null,
+                'size_bytes'       => 0,
+                'status'           => 'queued',
+                'initiated_by'     => 'cron',
+                'user_id'          => null,
+                'progress_percent' => 0,
+                'current_step'     => 'queued',
             ]);
+
+            \App\Jobs\RunBackupJob::dispatch($backup->id, (bool)$settings->upload_yandex);
             \Illuminate\Support\Facades\Artisan::call('backup:prune', ['--keep' => 20]);
         })->dailyAt($this->getScheduleTime());
 
