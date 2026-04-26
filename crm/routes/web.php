@@ -106,4 +106,22 @@ Route::middleware('auth')->group(function () {
     });
 });
 
+// Admin Technical Section
+Route::prefix('admin/technical')->name('admin.technical.')->middleware(['auth', 'admin'])->group(function () {
+    Route::get('/backups', [\App\Http\Controllers\Admin\BackupController::class, 'index'])->name('backups.index');
+    Route::post('/backups', [\App\Http\Controllers\Admin\BackupController::class, 'store'])->name('backups.store');
+    Route::get('/backups/test-yandex', [\App\Http\Controllers\Admin\BackupController::class, 'testYandex'])->name('backups.test-yandex');
+    Route::get('/backups/{backup}/download', [\App\Http\Controllers\Admin\BackupController::class, 'download'])->name('backups.download');
+    Route::delete('/backups/{backup}', [\App\Http\Controllers\Admin\BackupController::class, 'destroy'])->name('backups.destroy');
+
+    Route::get('/schedule', [\App\Http\Controllers\Admin\ScheduleController::class, 'index'])->name('schedule.index');
+    Route::patch('/schedule', [\App\Http\Controllers\Admin\ScheduleController::class, 'update'])->name('schedule.update');
+
+    Route::get('/audit', [\App\Http\Controllers\Admin\AuditController::class, 'index'])->name('audit.index');
+
+    Route::get('/logs', [\App\Http\Controllers\Admin\LogController::class, 'index'])->name('logs.index');
+    Route::get('/logs/download', [\App\Http\Controllers\Admin\LogController::class, 'download'])->name('logs.download');
+    Route::post('/logs/clear', [\App\Http\Controllers\Admin\LogController::class, 'clear'])->name('logs.clear');
+});
+
 require __DIR__ . '/auth.php';

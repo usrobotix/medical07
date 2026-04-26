@@ -31,4 +31,9 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'yandex_disk' => [
+        'token' => env('YANDEX_DISK_TOKEN', ''),
+        'folder' => env('YANDEX_DISK_FOLDER', '/medical07/backups'),
+    ],
+
 ];
