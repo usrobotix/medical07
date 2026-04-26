@@ -1,0 +1,35 @@
+название: Charité Comprehensive Cancer Center
+страна: Германия
+город: Берлин
+направление: Онкология
+адрес: Charitéplatz 1, 10117 Berlin, Deutschland
+
+контакты:
+  сайт: https://www.charite.de/en/
+  страница_для_иностранных_пациентов: https://www.charite.de/en/patients_visitors/international_patients/
+  телефон: +49 30 450 570
+
+приём_иностранцев:
+  статус: да
+  источник_url: https://www.charite.de/en/patients_visitors/international_patients/
+
+приём_пациентов_из_РФ:
+  статус: да
+  источник_url: https://www.charite.de/en/patients_visitors/international_patients/
+
+режим_работы:
+  клиника: "Пн–Пт 08:00–18:00"
+
+ключевые_услуги:
+  - Онкология
+  - Гематология
+  - Радиотерапия
+  - Химиотерапия
+  - Иммунотерапия
+
+дата_последней_проверки: "2026-04-01"
+
+источники:
+  - url: https://www.charite.de/en/patients_visitors/international_patients/
+    описание: Официальный сайт — страница для иностранных пациентов
+    дата_проверки: "2026-04-01"
