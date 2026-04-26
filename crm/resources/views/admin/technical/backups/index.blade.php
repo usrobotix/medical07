@@ -18,6 +18,28 @@
             </div>
         @endif
 
+        {{-- Restore progress banner (filesystem-based, survives DB restore) --}}
+        @if(session('restore_uuid'))
+            <div x-data="restoreUuidPoller(
+                    {{ json_encode(session('restore_uuid')) }},
+                    {{ json_encode(route('admin.technical.backups.restore-status', ['restoreUuid' => session('restore_uuid')])) }}
+                 )"
+                 x-init="start()"
+                 class="mb-4 p-4 bg-blue-50 border border-blue-300 text-blue-900 rounded-2xs">
+                <div class="flex items-center gap-2 mb-2">
+                    <strong>Восстановление БД</strong>
+                    <span class="text-sm" x-text="statusLabel"></span>
+                    <span class="text-xs text-blue-600" x-text="stepLabel ? ('— ' + stepLabel) : ''"></span>
+                </div>
+                <div class="w-full bg-blue-200 rounded-full h-2">
+                    <div class="h-2 rounded-full bg-blue-600 transition-all duration-300"
+                         :style="'width:' + progress + '%'"></div>
+                </div>
+                <div class="text-xs mt-1 text-blue-700" x-text="progress + '%'"></div>
+                <div x-show="errorMsg" class="text-red-600 mt-1 text-xs" x-text="errorMsg"></div>
+            </div>
+        @endif
+
         {{-- Windows / OpenServer hint when queue driver is sync --}}
         @if($queueIsSync)
             <div class="mb-4 p-4 bg-yellow-50 border border-yellow-300 text-yellow-800 rounded-2xs text-sm" id="queue-sync-hint">
@@ -404,8 +426,16 @@
             _poll() {
                 this._timer = setInterval(() => {
                     fetch(statusUrl)
-                        .then(r => r.json())
+                        .then(r => {
+                            // Stop polling gracefully when the record is gone (404 after DB restore).
+                            if (r.status === 404 || r.status === 410) {
+                                clearInterval(this._timer);
+                                return null;
+                            }
+                            return r.json();
+                        })
                         .then(data => {
+                            if (!data) return;
                             this.status      = data.status;
                             this.progress    = data.progress_percent ?? this.progress;
                             this.stepLabel   = stepLabelsMap[data.current_step] || (data.current_step || '');
@@ -413,6 +443,54 @@
                             this.errorMsg    = data.error_message || '';
 
                             if (data.status === 'done' || data.status === 'failed') {
+                                clearInterval(this._timer);
+                                setTimeout(() => location.reload(), 1500);
+                            }
+                        })
+                        .catch(() => {/* silent */});
+                }, 2000);
+            },
+        };
+    }
+
+    /**
+     * Polls the filesystem-based restore status endpoint (/backups/restore/{uuid}/status).
+     * Works even after the backups table has been wiped and recreated by the SQL restore.
+     */
+    function restoreUuidPoller(uuid, statusUrl) {
+        return {
+            status:      'queued',
+            progress:    0,
+            stepLabel:   '',
+            statusLabel: 'В очереди',
+            errorMsg:    '',
+            _timer:      null,
+
+            start() {
+                this._poll();
+            },
+
+            _poll() {
+                this._timer = setInterval(() => {
+                    fetch(statusUrl)
+                        .then(r => {
+                            // 410 Gone: file cleaned up after completion or never existed.
+                            if (r.status === 410 || r.status === 404) {
+                                clearInterval(this._timer);
+                                setTimeout(() => location.reload(), 1500);
+                                return null;
+                            }
+                            return r.json();
+                        })
+                        .then(data => {
+                            if (!data) return;
+                            this.status      = data.status;
+                            this.progress    = data.progress_percent ?? this.progress;
+                            this.stepLabel   = stepLabelsMap[data.current_step] || (data.current_step || '');
+                            this.statusLabel = statusLabelsMap[data.status] || data.status;
+                            this.errorMsg    = data.error_message || '';
+
+                            if (data.status === 'done' || data.status === 'failed' || data.status === 'gone') {
                                 clearInterval(this._timer);
                                 setTimeout(() => location.reload(), 1500);
                             }

@@ -111,6 +111,7 @@ Route::prefix('admin/technical')->name('admin.technical.')->middleware(['auth', 
     Route::get('/backups', [\App\Http\Controllers\Admin\BackupController::class, 'index'])->name('backups.index');
     Route::post('/backups', [\App\Http\Controllers\Admin\BackupController::class, 'store'])->name('backups.store');
     Route::get('/backups/test-yandex', [\App\Http\Controllers\Admin\BackupController::class, 'testYandex'])->name('backups.test-yandex');
+    Route::get('/backups/restore/{restoreUuid}/status', [\App\Http\Controllers\Admin\BackupController::class, 'restoreStatus'])->name('backups.restore-status');
     Route::get('/backups/{backup}/status', [\App\Http\Controllers\Admin\BackupController::class, 'status'])->name('backups.status');
     Route::get('/backups/{backup}/download', [\App\Http\Controllers\Admin\BackupController::class, 'download'])->name('backups.download');
     Route::post('/backups/{backup}/restore', [\App\Http\Controllers\Admin\BackupController::class, 'restore'])->name('backups.restore');
