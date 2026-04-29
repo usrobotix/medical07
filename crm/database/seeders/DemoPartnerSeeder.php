@@ -6,8 +6,10 @@ use App\Models\Country;
 use App\Models\Niche;
 use App\Models\Partner;
 use App\Models\PartnerLayer;
-use App\Models\VerificationChecklist;
 use App\Models\PartnerVerification;
+use App\Models\PartnerVerificationItem;
+use App\Models\VerificationChecklist;
+use App\Models\VerificationChecklistItem;
 use Illuminate\Database\Seeder;
 
 class DemoPartnerSeeder extends Seeder
@@ -114,25 +116,55 @@ class DemoPartnerSeeder extends Seeder
         // Create pending verification instances for the demo clinic
         $clinicChecklist = VerificationChecklist::where('code', 'clinic_verification')->first();
         if ($clinicChecklist) {
-            PartnerVerification::firstOrCreate(
+            $clinicVerification = PartnerVerification::firstOrCreate(
                 ['partner_id' => $clinic->id, 'checklist_id' => $clinicChecklist->id],
                 ['status' => 'not_started']
             );
+            $this->seedVerificationItems($clinicVerification, $clinicChecklist);
         }
 
         $translatorChecklist = VerificationChecklist::where('code', 'translator_verification')->first();
         if ($translatorChecklist) {
-            PartnerVerification::firstOrCreate(
+            $translatorVerification = PartnerVerification::firstOrCreate(
                 ['partner_id' => $translator->id, 'checklist_id' => $translatorChecklist->id],
                 ['status' => 'not_started']
             );
+            $this->seedVerificationItems($translatorVerification, $translatorChecklist);
         }
 
         $curatorChecklist = VerificationChecklist::where('code', 'curator_verification')->first();
         if ($curatorChecklist) {
-            PartnerVerification::firstOrCreate(
+            $curatorVerification = PartnerVerification::firstOrCreate(
                 ['partner_id' => $curator->id, 'checklist_id' => $curatorChecklist->id],
                 ['status' => 'not_started']
+            );
+            $this->seedVerificationItems($curatorVerification, $curatorChecklist);
+        }
+    }
+
+    /**
+     * Create (or skip if already present) one PartnerVerificationItem per
+     * checklist item for the given verification record.
+     */
+    private function seedVerificationItems(
+        PartnerVerification $verification,
+        VerificationChecklist $checklist
+    ): void {
+        $items = VerificationChecklistItem::where('checklist_id', $checklist->id)
+            ->orderBy('sort_order')
+            ->get();
+
+        foreach ($items as $item) {
+            PartnerVerificationItem::firstOrCreate(
+                [
+                    'partner_verification_id' => $verification->id,
+                    'checklist_item_id'       => $item->id,
+                ],
+                [
+                    'is_checked' => false,
+                    'checked_at' => null,
+                    'notes'      => null,
+                ]
             );
         }
     }
